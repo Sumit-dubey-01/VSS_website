@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VSS | Generative AI & LLMs Course</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+      /* ===============================
+           DESIGN SYSTEM VARIABLES
+        ================================ */
+      :root {
+        --primary: #22d3ee;
+        --primary-glow: rgba(34, 211, 238, 0.3);
+        --bg-dark: #020617;
+        --card-bg: rgba(255, 255, 255, 0.03);
+        --border-color: rgba(255, 255, 255, 0.1);
+        --accent-red: #ff0000;
+        --text-main: #ffffff;
+        --text-muted: #c5deff;
+        --font-main: "Plus Jakarta Sans", sans-serif;
+      }
+
+      /* ===============================
+           GLOBAL STYLES
+        ================================ */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-main);
+        background: var(--bg-dark);
+        color: var(--text-main);
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+        transition: 0.3s;
+      }
+
+      section {
+        padding: 80px 6%;
+        position: relative;
+        z-index: 2;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: auto;
+      }
+
+      .gradient-text {
+        background: linear-gradient(
+          135deg,
+          var(--accent-red) 0%,
+          var(--primary) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .underline {
+        width: 60px;
+        height: 4px;
+        background: var(--primary);
+        border-radius: 10px;
+        margin: 14px 0 25px;
+      }
+
+      /* ===============================
+           CANVAS BACKGROUND
+        ================================ */
+      #bg-canvas {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      /* ===============================
+           HEADER
+        ================================ */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(2, 6, 23, 0.8);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 6%;
+        max-width: 1400px;
+        margin: auto;
+      }
+
+      .logo img {
+        height: 3.5rem;
+        width: 62px;
+        display: block;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+      }
+
+      .cta-btn {
+        padding: 12px 24px;
+        border-radius: 50px;
+        background: var(--primary);
+        color: #000;
+        font-weight: 700;
+        cursor: pointer;
+        border: none;
+        display: inline-block;
+      }
+
+      .cta-btn-outline {
+        background: transparent;
+        color: var(--primary);
+        border: 1px solid var(--primary);
+      }
+
+      .cta-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px var(--primary-glow);
+      }
+
+      /* ===============================
+           GLASS CARD
+        ================================ */
+      .glass-card {
+        position: relative;
+        background: var(--card-bg);
+        backdrop-filter: blur(12px);
+        border: 1px solid var(--border-color);
+        border-radius: 18px;
+        padding: 35px;
+        transition: all 0.35s ease;
+        overflow: hidden;
+        border-color: #ff0000;
+      }
+
+      .glass-card:hover {
+        transform: translateY(-5px);
+        border-color: #ff0000;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+
+      /* ===============================
+           HERO
+        ================================ */
+      .hero {
+        text-align: center;
+        padding: 120px 6% 80px;
+      }
+
+      .hero h1 {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 800;
+        margin-bottom: 20px;
+      }
+
+      .hero p {
+        color: var(--text-muted);
+        font-size: 1.2rem;
+        max-width: 800px;
+        margin: 0 auto 40px;
+      }
+
+      .hero .actions {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      /* ===============================
+           GRID LAYOUTS
+        ================================ */
+      .grid-main {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .grid-bottom {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+
+      /* ===============================
+           ACCORDION
+        ================================ */
+      .accordion-item {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .accordion-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 0;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        color: var(--text-muted);
+        transition: max-height 0.4s ease, padding 0.3s ease;
+      }
+
+      .accordion-item.active .accordion-content {
+        max-height: 300px;
+        padding-bottom: 20px;
+      }
+
+      .accordion-item.active i {
+        transform: rotate(180deg);
+      }
+
+      /* ===============================
+           FOOTER
+        ================================ */
+      footer {
+        padding: 60px 6%;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        text-align: center;
+        color: var(--text-muted);
+        background: rgba(0, 0, 0, 0.3);
+      }
+
+      .footer-links {
+        margin-top: 15px;
+      }
+
+      .footer-links a {
+        margin: 0 15px;
+        font-size: 0.9rem;
+      }
+
+      /* ===============================
+           REVEAL ANIMATION
+        ================================ */
+      .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease-out;
+      }
+
+      .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ===============================
+           RESPONSIVE
+        ================================ */
+      @media (max-width: 992px) {
+        .grid-main,
+        .grid-bottom {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .nav-links a:not(.cta-btn) {
+          display: none;
+        }
+        .hero h1 {
+          font-size: 2.2rem;
+        }
+        .hero .actions .cta-btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <canvas id="bg-canvas"></canvas>
+
+    <header>
+      <nav class="nav">
+        <div class="logo">
+          <img src="logo.png" alt="VSS Logo" />
+        </div>
+        <div class="nav-links">
+          <a href="AI_Cou.html">Courses</a>
+          <a href="#">Programs</a>
+          <a href="#" class="cta-btn">Enroll</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section class="hero reveal">
+        <h1><span class="gradient-text">Generative AI & LLMs</span></h1>
+        <p>
+          <strong>Duration: 60 Hours</strong> | Master the core architecture of
+          LLMs, build robust RAG systems, and deploy autonomous AI agents with
+          industry-standard workflows.
+        </p>
+        <div class="actions">
+          <a href="#" class="cta-btn">Enroll Now</a>
+          <a href="#" class="cta-btn cta-btn-outline"
+            >Request College Delivery</a
+          >
+        </div>
+      </section>
+
+      <section class="reveal">
+        <div class="grid-main">
+          <div class="glass-card">
+            <h2>Overview + Outcomes</h2>
+            <div class="underline"></div>
+            <p>
+              <strong>What you'll learn:</strong> From Transformer basics to
+              Capstone projects and industry-standard CI/CD for AI.
+            </p>
+            <p style="margin-top: 15px">
+              <strong>Outcomes:</strong> Production-grade RAG, fine-tuning
+              (LoRA/QLoRA), multi-agent systems, and cloud deployment.
+            </p>
+          </div>
+          <div class="glass-card">
+            <h2>Tools & Requirements</h2>
+            <div class="underline"></div>
+            <p
+              style="
+                color: var(--primary);
+                font-weight: 600;
+                margin-bottom: 10px;
+              "
+            >
+              Tech Stack:
+            </p>
+            <p>
+              Python • HF • LangChain • LlamaIndex • FAISS/Chroma • FastAPI •
+              Docker • Colab Compatible
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="reveal">
+        <div class="glass-card">
+          <h2>Syllabus (Units 1-12)</h2>
+          <div class="underline"></div>
+          <p style="margin-bottom: 20px">
+            Every unit includes:
+            <strong>Theory + Hands-on Lab + Deliverable</strong>
+          </p>
+
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <span>Units 1-4: Foundation & Prompt Engineering (15 Hours)</span>
+              <i data-lucide="chevron-down"></i>
+            </div>
+            <div class="accordion-content">
+              LLM Architectures, Tokenization, Prompt Design Patterns, and API
+              Integration (OpenAI/Anthropic).
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <span>Units 5-8: RAG & Vector Databases (20 Hours)</span>
+              <i data-lucide="chevron-down"></i>
+            </div>
+            <div class="accordion-content">
+              Document chunking, Embeddings, FAISS/Pinecone, and building
+              semantic search pipelines.
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <span>Units 9-12: Fine-Tuning & Agents (25 Hours)</span>
+              <i data-lucide="chevron-down"></i>
+            </div>
+            <div class="accordion-content">
+              PEFT/LoRA fine-tuning on custom datasets, LangGraph for Agents,
+              and Dockerizing for AWS/GCP.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="reveal">
+        <div class="grid-bottom">
+          <div class="glass-card">
+            <h2>Student Outcomes</h2>
+            <div class="underline"></div>
+            <p>
+              Verify skills through "Before-After" skill mapping. Graduates
+              receive:
+            </p>
+            <ul style="margin: 15px 0 0 20px; color: var(--text-muted)">
+              <li>Verified Sample GitHub Projects</li>
+              <li>Industry-recognized Certification</li>
+              <li>Portfolio of 4 Capstone Apps</li>
+            </ul>
+          </div>
+          <div class="glass-card">
+            <h2>FAQs</h2>
+            <div class="underline"></div>
+            <div class="accordion-item">
+              <div class="accordion-header">
+                <span>Who can join?</span
+                ><i data-lucide="plus" style="width: 16px"></i>
+              </div>
+              <div class="accordion-content">
+                Final year students or working professionals with Python basics.
+              </div>
+            </div>
+            <div class="accordion-item">
+              <div class="accordion-header">
+                <span>Placement support?</span
+                ><i data-lucide="plus" style="width: 16px"></i>
+              </div>
+              <div class="accordion-content">
+                Dedicated resume building and AI-interview prep included.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    
+
+      <div
+        class="container"
+        style="
+          text-align: center;
+          padding: 40px 0;
+          color: var(--text-muted);
+          border-top: 1px solid var(--border-color);">
+        <p>© 2026 VSS | Generative AI & LLMs Course</p>
+      </div>
+   
+
+    <script>
+      /* ===============================
+       SCROLL REVEAL
+    ================================ */
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) entry.target.classList.add("active");
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      document
+        .querySelectorAll(".reveal")
+        .forEach((el) => observer.observe(el));
+
+      /* ===============================
+       ACCORDION LOGIC
+    ================================ */
+      document.querySelectorAll(".accordion-header").forEach((header) => {
+        header.addEventListener("click", () => {
+          const item = header.parentElement;
+          const isActive = item.classList.contains("active");
+
+          // Close other items in the same section
+          item.parentElement
+            .querySelectorAll(".accordion-item")
+            .forEach((el) => {
+              el.classList.remove("active");
+            });
+
+          if (!isActive) item.classList.add("active");
+        });
+      });
+
+      /* ===============================
+       ICONS
+    ================================ */
+      lucide.createIcons();
+
+      /* ===============================
+       NETWORK NODES CANVAS (BG)
+    ================================ */
+      const canvas = document.getElementById("bg-canvas");
+      const ctx = canvas.getContext("2d");
+
+      let w, h;
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+      window.addEventListener("resize", resize);
+      resize();
+
+      const particles = [];
+      const count = window.innerWidth < 768 ? 40 : 90;
+
+      class Particle {
+        constructor() {
+          this.x = Math.random() * w;
+          this.y = Math.random() * h;
+          this.vx = (Math.random() - 0.5) * 0.5;
+          this.vy = (Math.random() - 0.5) * 0.5;
+        }
+        move() {
+          this.x += this.vx;
+          this.y += this.vy;
+          if (this.x < 0 || this.x > w) this.vx *= -1;
+          if (this.y < 0 || this.y > h) this.vy *= -1;
+        }
+      }
+
+      for (let i = 0; i < count; i++) particles.push(new Particle());
+
+      function animate() {
+        ctx.clearRect(0, 0, w, h);
+        particles.forEach((p) => {
+          p.move();
+          ctx.fillStyle = "rgba(34, 211, 238, 0.3)";
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        for (let i = 0; i < count; i++) {
+          for (let j = i + 1; j < count; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 150) {
+              ctx.strokeStyle = `rgba(34, 211, 238, ${0.15 - dist / 1000})`;
+              ctx.lineWidth = 0.5;
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(animate);
+      }
+      animate();
+    </script>
+  </body>
+</html>

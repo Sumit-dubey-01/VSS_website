@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>VATE SoftSys | AI • EdTech • Staffing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+      /* --- CSS VARIABLES --- */
+      :root {
+        --primary: #00ccff;
+        --accent-red: rgb(255, 64, 64);
+        --bg-dark: #020617;
+        --card-bg: rgba(184, 0, 0, 0.03);
+        --border-color: rgba(255, 255, 255, 0.1);
+        --text-main: #ffffff;
+        --text-muted: #cbd5e1;
+        --font-main: "Plus Jakarta Sans", sans-serif;
+        --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* --- BASE STYLES --- */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: var(--font-main);
+        background-color: var(--bg-dark);
+        color: var(--text-main);
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
+
+      #bg-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+        opacity: 0.9;
+      }
+
+      .container {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      /* --- NAVIGATION --- */
+      nav {
+        position: fixed;
+        width: 100%;
+        z-index: 1000;
+        background: rgba(2, 6, 23, 0.85);
+        backdrop-filter: blur(15px);
+        border-bottom: 1px solid var(--border-color);
+      }
+      .nav-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+      }
+
+      /* LOGO - SINGLE LINE FORCED */
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+      }
+      .logo img {
+        width: 45px;
+        height: 45px;
+        border-radius: 4px;
+        flex-shrink: 0;
+      }
+      .logo-text {
+        display: flex;
+        gap: 5px;
+        font-weight: 800;
+        font-size: 20px;
+        white-space: nowrap;
+      }
+      /* additional code */
+      .logo span {
+        color: var(--primary);
+      }
+      /* end */
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+      }
+      .nav-links a {
+        text-decoration: none;
+        color: var(--text-muted);
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        transition: var(--transition);
+        position: relative;
+      }
+      .nav-links a:hover {
+        color: white;
+      }
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -5px;
+        left: 0;
+        background: var(--primary);
+        transition: width 0.3s ease;
+      }
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+      .mobile-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+      }
+
+      .btn-contact {
+        background: var(--primary);
+        color: #dfdbdb;
+        padding: 0.6rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 0.8rem;
+        transition: var(--transition);
+      }
+      .btn-contact:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px var(--primary-glow);
+      }
+
+      .btn-selection {
+        width: 100%;
+        display: block;
+        color: white;
+        font-family: var(--font-main);
+      }
+      .btn-selection:hover {
+        box-shadow: 0 0 30px var(--primary-glow);
+        transform: scale(1.02) translateY(-5px) !important;
+      }
+      .btn-selection h3 {
+        margin-bottom: 0 !important;
+      }
+
+      /* --- HERO --- */
+      .hero {
+        padding: 12rem 0 8rem 0;
+        text-align: center;
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+      .hero h1 {
+        font-size: clamp(2.5rem, 8vw, 5.5rem);
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+      }
+      .gradient-text {
+        background: linear-gradient(135deg, #ffffff 30%, var(--primary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .linear-gradient {
+        background: linear-gradient(300deg, #ffffff 20%, red 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .hero p {
+        font-size: 1.2rem;
+        color: var(--text-muted);
+        max-width: 700px;
+        margin: 0 auto 3rem;
+      }
+      .hero-btns {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+      }
+
+      .btn-main {
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+      }
+      .btn-white {
+        background: white;
+        color: black;
+      }
+      .btn-glass {
+        background: var(--card-bg);
+        color: white;
+        border: 1px solid var(--border-color);
+      }
+
+      /* --- SECTIONS --- */
+      section {
+        padding: 4rem 0;
+      }
+      .section-title {
+        margin-bottom: 3rem;
+      }
+      .section-title h2 {
+        font-size: clamp(1.8rem, 5vw, 2.8rem);
+        font-weight: 800;
+      }
+      .underline {
+        width: 60px;
+        height: 4px;
+        background: var(--primary);
+        margin-top: 10px;
+      }
+
+      .grid-layout {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .glass-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(253, 29, 29, 0.692);
+        border-radius: 24px;
+        padding: 2rem;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+        transition: var(--transition);
+      }
+      .glass-card:hover {
+        transform: translateY(-10px);
+        border-color: var(--accent-red);
+        background: rgba(255, 89, 89, 0.164);
+      }
+      .btn-main btn-white:hover {
+        color: var(--primary);
+      }
+      .glass-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          600px circle at var(--mouse-x) var(--mouse-y),
+          rgba(34, 211, 238, 0.1),
+          transparent 40%
+        );
+        z-index: 0;
+        pointer-events: none;
+      }
+      .glass-card i {
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        display: block;
+      }
+      .glass-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+      .glass-card p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+      }
+      /* --- INITIATIVES SECTION --- */
+      .initiatives {
+        background: rgba(34, 211, 238, 0.02);
+        padding: 8rem 0;
+        border-top: 1px solid var(--border-color);
+      }
+      .init-card {
+        border-left: 4px solid var(--primary);
+        cursor: pointer;
+      }
+      .badge {
+        font-size: 10px;
+        background: rgba(250, 32, 32, 0.308);
+        color: var(--primary);
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: 700;
+      }
+
+      /* --- COMPLETE FOOTER STYLES --- */
+      footer {
+        padding: 6rem 0 3rem;
+        border-top: 1px solid var(--border-color);
+        /* background: rgba(0, 0, 0, 0.4); */
+      }
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 4rem;
+        margin-bottom: 4rem;
+      }
+      .footer-grid h5 {
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        color: white;
+        letter-spacing: 1px;
+      }
+      .footer-grid ul {
+        list-style: none;
+      }
+      .footer-grid ul li {
+        margin-bottom: 0.8rem;
+      }
+      .footer-grid a {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: 0.3s;
+        font-size: 0.9rem;
+      }
+      .footer-grid a:hover {
+        color: var(--primary);
+        padding-left: 5px;
+      }
+
+      .social-links {
+        display: flex;
+        gap: 15px;
+        margin-top: 1.5rem;
+      }
+      .social-link {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--card-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        transition: 0.3s;
+        border: 1px solid var(--border-color);
+      }
+      .social-link:hover {
+        color: var(--primary);
+        border-color: var(--primary);
+        transform: translateY(-3px);
+      }
+
+      .copy {
+        text-align: center;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        border-top: 1px solid var(--border-color);
+        padding-top: 2rem;
+      }
+
+      /* --- REVEAL ANIMATION --- */
+      .reveal {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 0.8s ease-out;
+      }
+      .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* --------------------------------------------------------- */
+      /* --- RESPONSIVE CORE VARIABLES --- */
+      :root {
+        --primary: #00ccff;
+        --accent-red: rgb(255, 64, 64);
+        --bg-dark: #020617;
+        --border-color: rgba(255, 255, 255, 0.1);
+        --text-main: #ffffff;
+        --text-muted: #cbd5e1;
+        --font-main: "Plus Jakarta Sans", sans-serif;
+        --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+        /* FLUID PADDING: Scales based on screen width */
+        --gutter: clamp(1rem, 5vw, 2.5rem);
+      }
+
+      /* --- RESET & BASE --- */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-main);
+        background-color: var(--bg-dark);
+        color: var(--text-main);
+        overflow-x: hidden; /* Prevents horizontal scroll on all devices */
+        width: 100%;
+      }
+
+      /* --- FLEXIBLE CONTAINER --- */
+      .container {
+        width: 100%;
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 0 var(--gutter);
+      }
+
+      /* --- NAVIGATION LOGIC --- */
+      nav {
+        position: fixed;
+        width: 100%;
+        z-index: 1000;
+        background: rgba(2, 6, 23, 0.95);
+        backdrop-filter: blur(15px);
+        border-bottom: 1px solid var(--border-color);
+      }
+      .nav-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 80px;
+        
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        flex-shrink: 0;
+      }
+      .logo img {
+        width: 90px;
+        height: 60px;
+        border-radius: 50px;
+      }
+      .logo-text h3 {
+        font-weight: 800;
+        font-size: 39px;
+        white-space: nowrap;
+      }
+
+      /* Mobile View (Default) */
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        background: #020617;
+        padding: 2rem;
+        gap: 1.5rem;
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .nav-links.active {
+        display: flex;
+      }
+      .nav-links a {
+        text-decoration: none;
+        color: var(--text-muted);
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+      }
+      .mobile-toggle {
+        display: block;
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+      }
+      .btn-contact {
+        display: none;
+      } /* Hidden on mobile */
+
+      /* Desktop Breakpoint (PC/Laptop/Desktop) */
+      @media (min-width: 1024px) {
+        .mobile-toggle {
+          display: none;
+        }
+        .nav-links {
+          display: flex;
+          flex-direction: row;
+          position: static;
+          padding: 0;
+          width: auto;
+          background: transparent;
+          border: none;
+          gap: 2rem;
+        }
+        .nav-links a {
+          font-size: 11px;
+        }
+        .btn-contact {
+          display: inline-block;
+          background: var(--primary);
+          color: white;
+          padding: 0.6rem 1.5rem;
+          border-radius: 50px;
+          font-weight: 700;
+          text-decoration: none;
+          font-size: 0.8rem;
+          transition: var(--transition);
+        }
+      }
+
+      /* --- RESPONSIVE TYPOGRAPHY (Fluid Scaling) --- */
+      h1 {
+        font-size: clamp(2.2rem, 8vw, 5.5rem);
+      }
+      h2 {
+        font-size: clamp(1.8rem, 5vw, 2.8rem);
+      }
+      h3 {
+        font-size: clamp(1.3rem, 3vw, 1.6rem);
+      }
+      p {
+        font-size: clamp(0.95rem, 2vw, 1.1rem);
+      }
+
+      /* --- THE ADAPTIVE GRID (The Secret Sauce) --- */
+      /* This automatically calculates how many columns fit based on device width */
+      .grid-layout {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+      }
+
+      /* --- HERO SECTION RESPONSIVENESS --- */
+      .hero {
+        padding: clamp(8rem, 15vh, 12rem) 0 4rem;
+        text-align: center;
+      }
+
+      .hero-btns {
+        display: flex;
+        flex-direction: column; /* Stacked on mobile */
+        gap: 1rem;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* --- FOOTER RESPONSIVENESS --- */
+      .footer-grid {
+        display: grid;
+        gap: 3rem;
+        grid-template-columns: 1fr; /* Stacked on mobile */
+      }
+
+      @media (min-width: 992px) {
+        .footer-grid {
+          grid-template-columns: 2fr 1fr 1fr; /* 3 Columns on desktop */
+        }
+      }
+
+      /* --- UTILITY --- */
+      .glass-card {
+        width: 100%; /* Ensures no overflow */
+        word-wrap: break-word;
+      }
+
+      img,
+      canvas {
+        max-width: 100%;
+        height: auto;
+      }
+    </style>
+  </head>
+
+  <body>
+    <canvas id="bg-canvas"></canvas>
+
+    <nav>
+      <div class="container nav-inner">
+        <a href="logo.png" class="logo">
+          <img src="logo.png" alt="Logo" />
+          <div class="logo-text">
+            <!-- <h3>
+              <span style="color: var(--primary)">V</span>
+              ><span style="color: white">ATE</span>
+              <span style="color: var(--accent-red)">S</span>
+              ><span style="color: white">oftware</span>
+              <span style="color: var(--accent-red)">S</span>
+              ><span style="color: white">ystems</span>
+            </h3> -->
+          </div>
+        </a>
+        <button class="mobile-toggle" id="menu-btn">
+          <i data-lucide="menu"></i>
+        </button>
+        <div class="nav-links" id="nav-links">
+          <a href="landingpage.html">Home</a>
+          <a href="AI_Cou.html">EdTech</a>
+          <a href="Recruit.html">Staffing</a>
+          <a href="AI_Cou.html">AI Solutions</a>
+          <a href="about.html">About</a>
+          <a href="how_vss_.html">Resources</a>
+        </div>
+        <a href="#contact" class="btn-contact">Contact Us</a>
+      </div>
+    </nav>
+
+    <section id="home" class="hero container">
+      <h1>
+        <span class="linear-gradient">Intelligence</span>
+        <br /><span class="gradient-text">Redefined.</span>
+      </h1>
+      <p class="reveal">
+        VSS bridges the gap between workforce potential and the AI revolution.
+      </p>
+      <div class="hero-btns reveal">
+        <a href="#" class="btn-main btn-white"
+          >Partner With Us <i data-lucide="arrow-up-right"></i
+        ></a>
+        <a href="how_vss_.html" class="btn-main btn-glass">View Resources</a>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="section-title reveal" style="text-align: center">
+        <h2>
+          <span style="color: var(--primary)">W</span
+          ><span style="color: white">ho</span>
+          <span style="color: var(--accent-red)">A</span
+          ><span style="color: white">re</span>
+          <span style="color: var(--accent-red)">Y</span
+          ><span style="color: white">ou?</span>
+        </h2>
+        <div class="underline" style="margin: 10px auto"></div>
+        <p style="color: var(--text-muted); margin-top: 15px">
+          Select your path to see how we can help you grow.
+        </p>
+      </div>
+      <div class="grid-layout">
+        <div
+          class="glass-card reveal"
+          style="text-align: center; cursor: pointer"
+        >
+          <i data-lucide="graduation-cap" style="margin: 0 auto 1rem"></i>
+          <h3>For Students / Colleges</h3>
+        </div>
+        <div
+          class="glass-card reveal"
+          style="text-align: center; cursor: pointer"
+           onclick="location.href='Recruit.html';" 
+        >
+          <i data-lucide="briefcase" style="margin: 0 auto 1rem"></i>
+          <h3>For Hiring</h3>
+        </div>
+        <div
+          class="glass-card reveal"
+          style="text-align: center; cursor: pointer"
+          onclick="location.href='Ai_Cou.html';" 
+        >
+          <i data-lucide="shopping-cart" style="margin: 0 auto 1rem"></i>
+          <h3>For AI Buyers</h3>
+        </div>
+      </div>
+    </section>
+    <br />
+    <br />
+    <section class="container" style="padding-bottom: 8rem">
+      <div class="section-title reveal">
+        <h2>
+          <span style="color: var(--primary)">C</span
+          ><span style="color: white">ore</span>
+          <span style="color: var(--accent-red)">S</span
+          ><span style="color: white">olutions</span>
+        </h2>
+        <div class="underline"></div>
+      </div>
+      <br />
+      <div class="grid-layout">
+        <div class="glass-card spotlight-card reveal"
+          onclick="window.location.href='index.html';" 
+     style="cursor: pointer;">
+          <i data-lucide="home" size="36"></i>
+          <h3>Home</h3>
+          <p>
+            Our ecosystem overview, core philosophy, and high-impact digital
+            transformation roadmap.
+          </p>
+        </div>
+        <div onclick="window.location.href='Recruit.html';" 
+     style="cursor: pointer;" id="staffing" class="glass-card spotlight-card reveal">
+          <i data-lucide="users" size="36"></i>
+          <h3>Staffing & Talent</h3>
+          <p>
+            End-to-end talent acquisition, AI screening, and specialized
+            workforce readiness programs.
+          </p>
+        </div>
+        <div onclick="window.location.href='AI_Cou.html';" 
+     style="cursor: pointer;" id="ai" class="glass-card spotlight-card reveal">
+          <i data-lucide="brain-circuit" size="36"></i>
+          <h3>AI & GenAI Solutions</h3>
+          <p>
+            Custom LLM architectures, Enterprise Copilots, and Generative AI
+            implementation labs.
+          </p>
+        </div>
+        <div onclick="window.location.href='about.html';" 
+     style="cursor: pointer;" class="glass-card reveal" id="about" class="glass-card spotlight-card reveal">
+          <i data-lucide="info" size="36"></i>
+          <h3>About VSS</h3>
+          <p>
+            Deep dive into our history, mission to democratize AI, and the
+            experts driving our vision.
+          </p>
+        </div>
+        <div id="resources" class="glass-card spotlight-card reveal">
+          <i data-lucide="layers" size="36"></i>
+          <h3>Resources</h3>
+          <p>
+            Stay updated with our technical blogs, industrial case studies, and
+            upcoming tech events.
+          </p>
+        </div>
+        <div id="contact" class="glass-card spotlight-card reveal">
+          <i data-lucide="handshake" size="36"></i>
+          <h3>Partner With Us</h3>
+          <p>
+            Ready to scale? Connect with our team for strategic partnerships and
+            business inquiries.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section style="background: rgba(255, 0, 0, 0.02)">
+      <div class="container">
+        <div class="section-title reveal" style="text-align: center">
+          <h2>
+            <span style="color: var(--primary)">Q</span
+            ><span style="color: white">uick</span>
+            <span style="color: var(--accent-red)">I</span
+            ><span style="color: white">nitiatives</span>
+          </h2>
+          <div class="underline" style="margin: 10px auto"></div>
+          <p style="color: var(--text-muted); margin-top: 10px">
+            Launch a project or join our ecosystem in minutes.
+          </p>
+        </div>
+        <div class="grid-layout">
+          <div onclick="window.location.href='Ai_Cou.html';" 
+     style="cursor: pointer;" class="glass-card reveal">
+            <div style="display: flex; justify-content: space-between">
+              <i data-lucide="graduation-cap"></i>
+              <span class="badge">POPULAR</span>
+            </div>
+            <h4>GenAI 60-Hour Flagship</h4>
+            <p>Enroll in our comprehensive industry-ready AI course.</p>
+          </div>
+          <div class="glass-card reveal">
+            <i data-lucide="file-badge"></i>
+            <h4>College Partnership</h4>
+            <p>MOU landing for institutional collaborations.</p>
+          </div>
+          <div onclick="window.location.href='Recruit.html';" 
+     style="cursor: pointer;"  class="glass-card reveal">
+            <i data-lucide="upload-cloud"></i>
+            <h4>Submit Hiring Requirement</h4>
+            <p>Upload JD and get AI-matched candidate profiles.</p>
+          </div>
+          <div class="glass-card reveal">
+            <i data-lucide="phone-call"></i>
+            <h4>Book AI Discovery Call</h4>
+            <p>Share your problem statement with our experts.</p>
+          </div>
+          <div class="glass-card reveal"
+            onclick="window.location.href='how_vss_.html';" 
+     style="cursor: pointer;">
+            <i data-lucide="file-text"></i>
+            <h4>Case Study Template</h4>
+            <p>Download our repeatable framework for success.</p>
+          </div>
+          <div class="glass-card reveal">
+            <i data-lucide="calendar"></i>
+            <h4>Workshop Registration</h4>
+            <p>Join our next technical event or AI workshop.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="container" id="contact">
+      <br />
+      <div class="footer-grid">
+        <div>
+          <div class="logo" style="margin-bottom: 1.5rem">
+            <img src="logo.png" alt="Logo" />
+            <div class="logo-text">
+              <!-- <h3>
+                <span style="color: var(--primary)">V</span>
+                ><span style="color: white">ATE</span>
+                <span style="color: var(--accent-red)">S</span>
+                ><span style="color: white">oftware</span>
+                <span style="color: var(--accent-red)">S</span>
+                ><span style="color: white">ystems</span>
+              </h3> -->
+            </div>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.95rem">
+            Building future-ready talent and intelligent AI systems for the next
+            generation of global enterprises.
+          </p>
+
+          <div class="social-links">
+            <a
+              href="https://www.linkedin.com/company/vate-tech/"
+              class="social-link"
+              target="_blank"
+              ><i data-lucide="linkedin"></i
+            ></a>
+            <a
+              href="https://wa.me/YOUR_NUMBER"
+              class="social-link"
+              target="_blank"
+              ><i data-lucide="message-circle"></i
+            ></a>
+            <a href="mailto:vatedigital@gmail.com" class="social-link"
+              ><i data-lucide="mail"></i
+            ></a>
+            <a
+              href="https://www.facebook.com/people/Vate-Digi/pfbid02zfG5x1FdR7JwK19N9oecWWMt5EPLHBtooDajPijhEiTxSNkVByZVtjaXy8XT6Pi6l/"
+              class="social-link"
+              target="_blank"
+              ><i data-lucide="facebook"></i
+            ></a>
+            <a href="#" class="social-link"><i data-lucide="instagram"></i></a>
+            <a href="#" class="social-link"><i data-lucide="twitter"></i></a>
+          </div>
+        </div>
+
+        <div>
+          <h5>Links</h5>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Success Stories</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5>Connect</h5>
+          <ul>
+            <li>
+              <a
+                href="mailto:vatedigital@gmail.com"
+                style="display: flex; align-items: center; gap: 8px"
+                ><i data-lucide="mail" size="14"></i> Email Us</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://wa.me/YOUR_NUMBER"
+                style="display: flex; align-items: center; gap: 8px"
+                ><i data-lucide="message-circle" size="14"></i> WhatsApp</a
+              >
+            </li>
+            <li>
+              <a
+                href="tel:+918147285223"
+                style="display: flex; align-items: center; gap: 8px"
+                ><i data-lucide="phone" size="14"></i> Call Us</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://www.linkedin.com/company/vate-tech/"
+                style="display: flex; align-items: center; gap: 8px"
+                ><i data-lucide="linkedin" size="14"></i> LinkedIn</a
+              >
+            </li>
+            <li>
+              <a href="#" style="display: flex; align-items: center; gap: 8px"
+                ><i data-lucide="map-pin" size="14"></i> Location</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copy">© 2026 VSS. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+      // Initialize Lucide Icons
+      lucide.createIcons();
+
+      // Mobile Menu Logic
+      const menuBtn = document.getElementById("menu-btn");
+      const navLinks = document.getElementById("nav-links");
+      menuBtn.addEventListener("click", () => {
+        navLinks.classList.toggle("active");
+        const icon = menuBtn.querySelector("i");
+        icon.setAttribute(
+          "data-lucide",
+          navLinks.classList.contains("active") ? "x" : "menu"
+        );
+        lucide.createIcons();
+      });
+
+      // Close menu when link is clicked
+      document.querySelectorAll(".nav-links a").forEach((link) => {
+        link.addEventListener("click", () =>
+          navLinks.classList.remove("active")
+        );
+      });
+
+      // Canvas Animation (Red Nodes)
+      const canvas = document.getElementById("bg-canvas");
+      const ctx = canvas.getContext("2d");
+      let particles = [];
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener("resize", resize);
+      resize();
+      class Particle {
+        constructor() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.vx = Math.random() * 0.4 - 0.2;
+          this.vy = Math.random() * 0.4 - 0.2;
+        }
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+          if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+          if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+        }
+      }
+      for (let i = 0; i < 70; i++) particles.push(new Particle());
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "rgba(34, 211, 238, 0.4)";
+        particles.forEach((p) => {
+          p.update();
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 1, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        // ctx.strokeStyle = 'rgba(0,204,255,0.)';
+
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i; j < particles.length; j++) {
+            const dist = Math.hypot(
+              particles[i].x - particles[j].x,
+              particles[i].y - particles[j].y
+            );
+            if (dist < 140) {
+              ctx.strokeStyle = `rgba(34, 211, 238, ${0.12 - dist / 1000})`;
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(animate);
+      }
+      animate();
+
+      document.addEventListener("mousemove", (e) => {
+        document
+          .querySelectorAll(".spotlight-card, .init-card, .btn-selection")
+          .forEach((card) => {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+            card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
+          });
+      });
+      // Scroll Reveal
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) entry.target.classList.add("active");
+          });
+        },
+        { threshold: 0.1 }
+      );
+      document
+        .querySelectorAll(".reveal")
+        .forEach((el) => observer.observe(el));
+    </script>
+  </body>
+</html>

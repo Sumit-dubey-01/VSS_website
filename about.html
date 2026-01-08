@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VSS | About</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+      /* --- DESIGN SYSTEM VARIABLES --- */
+      :root {
+        --primary: #22d3ee;
+        --accent-red: rgb(255, 64, 64);
+        --bg-dark: #020617;
+        --card-bg: rgba(255, 255, 255, 0.03);
+        --border-color: rgba(255, 255, 255, 0.1);
+        --text-main: #ffffff;
+        --text-muted: #94a3b8;
+        --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        --font-main: "Plus Jakarta Sans", sans-serif;
+      }
+
+      /* --- GLOBAL STYLES --- */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background-color: var(--bg-dark);
+        color: var(--text-main);
+        font-family: var(--font-main);
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
+
+      .linear-gradient {
+        background: linear-gradient(300deg, #ffffff 20%, red 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .gradient-text {
+        background: linear-gradient(135deg, #ffffff 30%, var(--primary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      /* Background Canvas */
+      #bg-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+        opacity: 0.9;
+      }
+
+      /* --- UTILITIES --- */
+      .reveal {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .gradient-text {
+        background: linear-gradient(135deg, #fff 30%, var(--primary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+      }
+
+      .glass-card {
+        background: var(--card-bg);
+        border: 1px solid rgba(253, 29, 29, 0.692);
+        border-radius: 24px;
+        padding: 2rem;
+        backdrop-filter: blur(10px);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .glass-card:hover {
+        border-color: var(--accent-red);
+        background: rgba(255, 102, 102, 0.164);
+      }
+
+      /* --- LOGO STYLING --- */
+      .brand-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+      }
+
+      .header-logo {
+        width: 90px;
+        height: 60px;
+        border-radius: 50px;
+      }
+
+      .footer-logo {
+        height: 50px;
+        width: auto;
+        border-radius: 50px;
+      }
+
+      /* --- HEADER --- */
+      nav.header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 10%;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(2, 6, 23, 0.8);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .logo-text {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--primary);
+        letter-spacing: -0.5px;
+      }
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+      }
+      .nav-links a {
+        color: var(--text-muted);
+        text-decoration: none;
+        margin: 0 1.5rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        transition: var(--transition);
+        position: relative;
+      }
+
+      .nav-links a:hover {
+        color: white;
+      }
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -5px;
+        left: 0;
+        background: var(--primary);
+        transition: width 0.3s ease;
+      }
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      /* --- HERO SECTION --- */
+      .hero {
+        text-align: center;
+        padding: 120px 10% 80px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      .hero h1 {
+        font-size: clamp(2.5rem, 8vw, 4.5rem);
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+      }
+      .hero p {
+        font-size: 1.25rem;
+        color: var(--text-muted);
+        margin-bottom: 2.5rem;
+        max-width: 700px;
+        margin-inline: auto;
+      }
+
+      .cta-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      /* --- BUTTONS --- */
+      .btn {
+        padding: 14px 32px;
+        border-radius: 50px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: #020617;
+        border: none;
+      }
+      .btn-primary:hover {
+        box-shadow: 0 0 25px var(--accent-red);
+        transform: translateY(-2px);
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: var(--primary);
+        border: 1px solid var(--primary);
+      }
+      .btn-outline:hover {
+        background: var(--primary);
+        color: #020617;
+        transform: translateY(-2px);
+      }
+      .btn-outline:hover {
+        box-shadow: 0 0 25px var(--accent-red);
+        transform: translateY(-2px);
+      }
+
+      /* --- PILLARS GRID --- */
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 4rem 10%;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .pillar-icon {
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        width: 40px;
+        height: 40px;
+      }
+      .pillar-card h3 {
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+      }
+      .pillar-card p {
+        color: var(--text-muted);
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
+      }
+
+      /* --- BOTTOM SECTION --- */
+      .bottom-section {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 2rem;
+        padding: 4rem 10%;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .lead-form input,
+      .lead-form select {
+        width: 100%;
+        padding: 14px;
+        margin-bottom: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        color: rgb(1, 235, 252);
+        outline: none;
+        font-family: inherit;
+        text-decoration: bold solid;
+      }
+
+      .lead-form input:focus {
+        border-color: var(--accent-red);
+      }
+
+      /* --- UPDATED FOOTER --- */
+      .footer-main {
+        padding: 4rem 10%;
+        border-top: 1px solid var(--border-color);
+        background: rgba(2, 6, 23, 0.9);
+        margin-top: 4rem;
+      }
+
+      .footer-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .footer-info p {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-top: 10px;
+      }
+
+      .social-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 12px;
+      }
+
+      .social-label {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 800;
+      }
+
+      .social-links {
+        display: flex;
+        gap: 1.2rem;
+      }
+
+      .social-icon {
+        color: var(--text-muted);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+      }
+
+      .social-icon:hover {
+        color: var(--primary);
+        transform: translateY(-5px) scale(1.1);
+        filter: drop-shadow(0 0 10px var(--accent-red));
+      }
+
+      /* --- RESPONSIVE --- */
+      @media (max-width: 992px) {
+        .bottom-section {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2.8rem;
+        }
+        .nav-links {
+          display: none;
+        }
+        .footer-container {
+          flex-direction: column;
+          text-align: center;
+        }
+        .social-wrapper {
+          align-items: center;
+        }
+        .brand-container {
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="bg-canvas"></canvas>
+
+    <nav class="header">
+      <a href="#" class="brand-container">
+        <img src="logo.png" alt="VATE SoftSys Logo" class="header-logo" />
+        <!-- <span class="logo-text">for compamy name space </span> -->
+      </a>
+      <div class="nav-links">
+        <a href="AI_Cou.html">Solutions</a>
+        <a href="Recruit.html">Training</a>
+        <a href="how_vss_.html">Company</a>
+      </div>
+      <button class="btn btn-primary" style="padding: 10px 24px">
+        <a href="landingpage.html">Get Started</a>
+      </button>
+    </nav>
+
+    <main>
+      <section class="hero reveal">
+        <h1>
+          <span class="linear-gradient">Learn. Get Hired.</span>
+          <br /><span class="gradient-text">Build with AI.</span>
+        </h1>
+        <p>
+          VSS is a 3-in-1 partner for colleges, employers, and AI buyers. We
+          bridge the gap between technical education and industry-scale
+          implementation.
+        </p>
+        <div class="cta-group">
+          <a href="#" class="btn btn-primary">Student/College</a>
+          <a href="Recruit.html" class="btn btn-outline">Hiring Partner</a>
+          <a href="AI_Cou.html" class="btn btn-outline">AI Solutions</a>
+        </div>
+      </section>
+
+      <section class="grid-container">
+        <div class="glass-card pillar-card reveal">
+          <i data-lucide="graduation-cap" class="pillar-icon"></i>
+          <h3>EdTech & Training</h3>
+          <p>
+            GenAI • Full Stack • Cloud. We provide industry-ready curriculum and
+            college partnerships designed for the 2025 tech landscape.
+          </p>
+          <a
+            href="AI_Cou.html"
+            style="
+              color: var(--primary);
+              text-decoration: none;
+              font-weight: bold;
+              font-size: 0.9rem;
+            "
+            >View Programs →</a
+          >
+        </div>
+
+        <div class="glass-card pillar-card reveal">
+          <i data-lucide="users" class="pillar-icon"></i>
+          <h3>Staffing</h3>
+          <p>
+            IT & Non-IT specialized hiring. We manage the campus-to-corporate
+            pipeline, ensuring high-quality placement for top-tier firms.
+          </p>
+          <a
+            href="Recruit.html"
+            style="
+              color: var(--primary);
+              text-decoration: none;
+              font-weight: bold;
+              font-size: 0.9rem;
+            "
+            >Submit Requirement →</a
+          >
+        </div>
+
+        <div class="glass-card pillar-card reveal">
+          <i data-lucide="cpu" class="pillar-icon"></i>
+          <h3>AI Solutions</h3>
+          <p>
+            From PoC to Scale. We build custom GenAI copilots, RAG applications,
+            and LLM-driven automation for modern enterprises.
+          </p>
+          <a
+            href="AI_Cou.html"
+            style="
+              color: var(--primary);
+              text-decoration: none;
+              font-weight: bold;
+              font-size: 0.9rem;
+            "
+            >Book Discovery Call →</a
+          >
+        </div>
+      </section>
+
+      <section class="bottom-section">
+        <div class="glass-card reveal">
+          <h3
+            style="
+              margin-bottom: 1.5rem;
+              display: flex;
+              align-items: center;
+              gap: 10px;
+            "
+          >
+            <h2 style="padding: 10px">
+              <!-- <i data-lucide="book-open" style="color: var(--primary)"></i> -->
+
+              <span style="color: var(--primary)">F</span
+              ><span style="color: white">eatured</span>
+              <span style="color: var(--accent-red)">R</span
+              ><span style="color: white">esources</span>
+            </h2>
+          </h3>
+          <div
+            style="
+              padding: 1.2rem;
+              border-left: 3px solid var(--primary);
+              background: rgba(255, 255, 255, 0.02);
+              margin-bottom: 1rem;
+              border-radius: 0 12px 12px 0;
+            "
+          >
+            <small
+              style="
+                color: var(--primary);
+                font-weight: 800;
+                letter-spacing: 1px;
+              "
+              >CASE STUDY</small
+            >
+            <p style="margin-top: 5px">
+              How we scaled AI training for 50+ regional colleges.
+            </p>
+          </div>
+          <div
+            style="
+              padding: 1.2rem;
+              border-left: 3px solid var(--border-color);
+              background: rgba(255, 255, 255, 0.02);
+              border-radius: 0 12px 12px 0;
+            "
+          >
+            <small
+              style="
+                color: var(--text-muted);
+                font-weight: 800;
+                letter-spacing: 1px;
+              "
+              >WEBINAR</small
+            >
+            <p style="margin-top: 5px">
+              Bridging the GenAI Skills Gap in 2025.
+            </p>
+          </div>
+        </div>
+
+        <div class="glass-card reveal">
+          <h3 style="margin-bottom: 1.5rem">Get a call back</h3>
+          <form class="lead-form">
+            <select>
+              <option>I am a...</option>
+              <option>Student</option>
+              <option>College / University</option>
+              <option>Hiring Company</option>
+              <option>AI Solutions Buyer</option>
+            </select>
+            <input type="text" placeholder="Full Name" required />
+            <input type="email" placeholder="Work Email" required />
+            <button
+              type="submit"
+              class="btn btn-primary"
+              style="width: 100%; margin-top: 10px"
+              
+            >
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSfMsOtqFteRkaUIGc3rMzLfsj-VPo2jPVp5kYw_nfQ952mFhQ/viewform">Send Request</a>
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer-main">
+      <div class="footer-container">
+        <div class="footer-info">
+          <div class="brand-container">
+            <img src="logo.png" alt="VATE SoftSys Logo" class="footer-logo" />
+            <span class="logo-text"></span>
+          </div>
+          <p>© 2026 VSS | All rights reserved.</p>
+        </div>
+
+        <div class="social-wrapper">
+          <span class="social-label">Follow our Journey</span>
+          <div class="social-links">
+            <a
+              href="https://www.linkedin.com/company/vate-tech/"
+              class="social-icon"
+              ><i data-lucide="linkedin"></i
+            ></a>
+            <a href="#" class="social-icon"><i data-lucide="twitter"></i></a>
+            <a href="#" class="social-icon"><i data-lucide="instagram"></i></a>
+            <a href="mailto:vatedigital@gmail.com" class="social-icon"
+              ><i data-lucide="mail"></i
+            ></a>
+            <a href="#" class="social-icon"><i data-lucide="youtube"></i></a>
+            <a
+              href="https://www.facebook.com/people/Vate-Digi/pfbid0vYePpda3UKzRvMCW7hqk52HRBbhfy1J7n6dYDXJzwwAv65vBCFCbor2JBaTGk3uBl/"
+              class="social-icon"
+              ><i data-lucide="facebook"></i
+            ></a>
+            <a href="#" class="social-icon"
+              ><i data-lucide="message-circle"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // 1. Initialize Lucide Icons
+      lucide.createIcons();
+
+      // 2. Scroll Reveal Observer
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("active");
+            }
+          });
+        },
+        { threshold: 0.15 }
+      );
+
+      document
+        .querySelectorAll(".reveal")
+        .forEach((el) => observer.observe(el));
+
+      // 3. Neural Network Canvas Animation
+      const canvas = document.getElementById("bg-canvas");
+      const ctx = canvas.getContext("2d");
+      let particles = [];
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      window.addEventListener("resize", resize);
+      resize();
+
+      class Particle {
+        constructor() {
+          this.init();
+        }
+        init() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.vx = (Math.random() - 0.5) * 0.4;
+          this.vy = (Math.random() - 0.5) * 0.4;
+          this.size = Math.random() * 1.5 + 0.5;
+        }
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+          if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+          if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+        }
+        draw() {
+          ctx.fillStyle = "rgba(34, 211, 238, 0.3)";
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      for (let i = 0; i < 90; i++) particles.push(new Particle());
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p, index) => {
+          p.update();
+          p.draw();
+
+          // Connect lines
+          for (let j = index + 1; j < particles.length; j++) {
+            const dx = p.x - particles[j].x;
+            const dy = p.y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 130) {
+              ctx.strokeStyle = `rgba(34, 211, 238, ${
+                0.15 * (1 - dist / 130)
+              })`;
+              ctx.lineWidth = 0.8;
+              ctx.beginPath();
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
+            }
+          }
+        });
+        requestAnimationFrame(animate);
+      }
+      animate();
+
+      // 4. Subtle Card Mouse Effect
+      document.addEventListener("mousemove", (e) => {
+        document.querySelectorAll(".glass-card").forEach((card) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          card.style.setProperty("--mouse-x", `${x}px`);
+          card.style.setProperty("--mouse-y", `${y}px`);
+        });
+      });
+    </script>
+  </body>
+</html>

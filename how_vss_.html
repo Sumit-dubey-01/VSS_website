@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VSS | How VSS Works</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --primary: #22d3ee;
+            --primary-glow: rgba(34, 211, 238, 0.3);
+            --bg-dark: #020617;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #cbd5e1;
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+        }
+
+         * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        canvas#bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+         header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            background: rgba(2, 6, 23, 0.95);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        /* ===== MOBILE MENU ===== */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-menu {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                flex-direction: column;
+                background: rgba(2, 6, 23, 0.98);
+                backdrop-filter: blur(20px);
+                padding: 1.5rem 0;
+                gap: 1.2rem;
+                border-top: 1px solid var(--border-color);
+
+                opacity: 0;
+                transform: translateY(-10px);
+                pointer-events: none;
+                transition: all 0.3s ease;
+            }
+
+            .nav-menu.active {
+                opacity: 1;
+                transform: translateY(0);
+                pointer-events: auto;
+            }
+        }
+         
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--bg-dark);
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 800;
+            display: inline-block;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 10px 20px var(--primary-glow);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        section {
+            padding: 80px 0;
+        }
+
+        .hero {
+            text-align: center;
+            padding-top: 60px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #ff0000 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .segment-switcher {
+            display: inline-flex;
+            background: var(--card-bg);
+            padding: 6px;
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+            margin: 2.5rem 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .segment-btn {
+            padding: 10px 24px;
+            border-radius: 50px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .segment-btn.active {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+
+        /*.glass-card {
+            background: var(--card-bg);
+            border: 1px solid red;
+            border: #ff0000;
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: 0.4s ease;
+        }
+
+        .glass-card:hover {
+            border-color: red;
+            transform: translateY(-5px);
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(34, 211, 238, 0.1), transparent 40%);
+            z-index: 0;
+            pointer-events: none;
+        }*/
+        .glass-card {
+            background: var(--card-bg);
+            border: 1.5px solid rgba(255, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+
+            /* RED NEON GLOW */
+            box-shadow:
+                0 0 15px rgba(255, 0, 0, 0.25),
+                0 0 30px rgba(255, 0, 0, 0.15);
+
+            animation: redGlowPulse 3s infinite ease-in-out;
+        }
+
+        /* STRONGER GLOW ON HOVER */
+        .glass-card:hover {
+            transform: translateY(-6px);
+            border-color: #ff0000;
+            /* box-shadow:
+        0 0 25px rgba(255, 0, 0, 0.6),
+        0 0 50px rgba(255, 0, 0, 0.35),
+        0 0 90px rgba(255, 0, 0, 0.25);*/
+        }
+
+        /* KEEP YOUR MOUSE LIGHT EFFECT */
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y),
+                    rgba(255, 0, 0, 0.15),
+                    transparent 40%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* PULSING RED GLOW ANIMATION 
+@keyframes redGlowPulse {
+    0% {
+        box-shadow:
+            0 0 12px rgba(255, 0, 0, 0.25),
+            0 0 25px rgba(255, 0, 0, 0.15);
+    }
+    50% {
+        box-shadow:
+            0 0 28px rgba(255, 0, 0, 0.6),
+            0 0 55px rgba(255, 0, 0, 0.35);
+    }
+    100% {
+        box-shadow:
+            0 0 12px rgba(255, 0, 0, 0.25),
+            0 0 25px rgba(255, 0, 0, 0.15);
+    }
+}*/
+
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 2rem;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            width: 95%;
+            max-width: 500px;
+            animation: slideUp 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: white;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            text-align: left;
+            color: var(--text-muted);
+        }
+
+        footer {
+            /* background: #0b1d33;*/
+            color: #e5e7eb;
+            padding: 4rem 1.5rem 2rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        footer a {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-grid {
+            max-width: 95%;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 500;
+            height: 1px;
+            ;
+
+        }
+
+        .logo img {
+            width: 49px;
+            height: auto;
+            border-radius: 50px;
+        }
+
+
+        footer p {
+            color: #9ca3af;
+            line-height: 1.7;
+        }
+
+
+        footer h5 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            position: relative;
+        }
+
+        footer h5::after {
+            content: "";
+            width: 70px;
+            height: 2px;
+            background: var(--primary, #3b82f6);
+            display: block;
+            margin-top: 6px;
+        }
+
+
+        footer ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        footer ul li {
+            margin-bottom: 0.75rem;
+        }
+
+        footer ul li a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        footer ul li a:hover {
+            color: #3b82f6;
+            transform: translateX(5px);
+        }
+
+
+        .social-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 1.2rem;
+        }
+
+        .social-link {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .social-link svg {
+            width: 20px;
+            height: 20px;
+        }
+
+
+        .social-link:hover {
+            background: #3b82f6;
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+
+
+        footer>p {
+            /* margin-top: 3rem;*/
+            text-align: center;
+            font-size: 0.9rem;
+            color: #9ca3af;
+            /* border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1.5rem;*/
+
+        }
+
+        footer>p a {
+            color: #3b82f6;
+        }
+
+        footer>p a:hover {
+            text-decoration: underline;
+        }
+
+        footer copyright>p {
+            margin-top: 0;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #9ca3af;
+            /*border-top: 1px solid rgba(255, 255, 255, 0.1);*/
+            padding-top: 0;
+        }
+
+        footer copyright>p a {
+            color: #3b82f6;
+        }
+
+        footer copyright>p a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .social-links {
+                justify-content: flex-start;
+            }
+
+            footer {
+                text-align: left;
+            }
+        }
+
+
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            section {
+                padding: 50px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+     <header>
+        <div class="logo">
+            <img src="logo.png" alt="VSS Logo">
+        </div>
+
+        <button class="menu-toggle" onclick="toggleMenu()">
+            <i data-lucide="menu"></i>
+        </button>
+
+        <ul class="nav-menu" id="mobileMenu">
+            <li><a class="nav-link" href="AI_Cou.html">Solutions</a></li>
+            <!-- <li><a class="nav-link" href="how_vss_.html">Case Studies</a></li> -->
+            <li><a class="nav-link" href="how_vss_.html">Resources</a></li>
+            <li><a class="nav-link" href="about.html">About</a></li>
+            <li><button class="btn-primary">Get Started</button></li>
+        </ul>
+    </header>
+
+    <div class="container">
+        <section class="hero reveal">
+            <h1 class="gradient-text">One partner for Campus </h1>
+            <h1 class="gradient-text">Hiring, and AI </h1>
+            <p class="text-muted">Empowering the next generation of talent and enterprise intelligence.</p>
+
+            <div class="segment-switcher">
+                <button class="segment-btn active" onclick="switchSegment('students', this)">Students/Colleges</button>
+                <button class="segment-btn" onclick="switchSegment('hiring', this)">Hiring Managers</button>
+                <button class="segment-btn" onclick="switchSegment('ai', this)">AI Buyers</button>
+            </div>
+
+            <div id="dynamic-cta-container">
+                <button onclick="toggleModal()" class="btn-primary" id="main-cta-btn">Join the Program</button>
+            </div>
+        </section>
+
+
+        <section class="reveal">
+            <div id="dynamic-content" class="glass-card"
+                style="text-align: center; min-height: 250px; display: flex; flex-direction: column; justify-content: center;">
+                <h2 id="dynamic-title" style="margin-bottom: 1rem;">Programs + Outcomes + Projects</h2>
+                <p id="dynamic-desc" class="text-muted" style="max-width: 700px; margin: 0 auto;">Bridging the gap
+                    between campus learning and industry requirements through hands-on project work and mentor-led
+                    training.</p>
+            </div>
+        </section>
+
+        <section class="reveal">
+            <h2 style="margin-bottom: 2.5rem;font-size:1.6rem; text-align: center;"><span class="gradient-text">How VSS Works</span></h2>
+            <div class="grid-3">
+                <div class="glass-card">
+                    <i data-lucide="book-open" style="color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h3>01. Learn</h3>
+                    <p class="text-muted">Intensive, industry-aligned training modules designed for the modern tech
+                        stack.</p>
+                </div>
+                <div class="glass-card">
+                    <i data-lucide="code-2" style="color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h3>02. Prove</h3>
+                    <p class="text-muted">Build a verifiable portfolio by solving real-world challenges and enterprise
+                        projects.</p>
+                </div>
+                <div class="glass-card">
+                    <i data-lucide="rocket" style="color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h3>03. Deploy</h3>
+                    <p class="text-muted">Direct placement into our partner network or seamless AI system integration.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid-2 reveal">
+            <div class="glass-card">
+                <h2 span style="color:red">S</span><span style="color:#22d3ee">uccess Story</span>
+            </h2>
+                <div style="display:flex; align-items:center; gap:12px; margin-bottom:1.5rem;">
+                    <i data-lucide="shield-check" style="color:var(--primary)"></i>
+                    <h2 style="margin:0;">Enterprise Trust</h2>
+                </div>
+                <p class="text-muted" style="margin-bottom: 1.5rem;">We prioritize data privacy, intellectual property
+                    protection, and rigorous delivery governance.</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div style="padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 12px;">
+                        <h4 style="color:var(--primary)">99%</h4>
+                        <p style="font-size: 0.8rem;">SLA Adherence</p>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 12px;">
+                        <h4 style="color:var(--primary)">100%</h4>
+                        <p style="font-size: 0.8rem;">Secure Workflows</p>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-card" style="display: flex; flex-direction: column; justify-content: center; gap: 1rem;">
+                <h2 span style="color:red">Q</span><span style="color:#22d3ee">uick Contact</span>
+                </h2>
+                <h3>Ready to scale?</h3>
+                <a href="https://wa.me/919555523836" class="btn-primary"
+                    style="background:#25D366; color:white; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <i data-lucide="message-circle"></i> WhatsApp Us
+                </a>
+                <button onclick="toggleModal()" class="btn-primary btn-outline">Request Custom Proposal</button>
+            </div>
+        </section>
+
+
+        <footer>
+            <div class="footer-grid">
+                <div>
+                    <div class="logo" style="margin-bottom: 1.5rem;">
+                        <img src="logo.png" alt="Logo">
+
+                    </div>
+                    <p style="color: var(text-muted); font-size: 0.95rem;">
+                        "Building future-ready talent and intelligent AI systems for the next generation of global
+                        enterprises."
+                    </p>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/company/vate-tech/" class="social-link" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin-"round" data-lucide "linkedin" class="lucide lucide-linkedin">
+                                <path
+                                    d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z">
+                                </path>
+                                <rect width="4" height="12" x="2" y="9"></rect>
+                                <circle cx="4" cy="4" r="2"></circle>
+                            </svg>
+                        </a>
+                        <a href="https://wa.me/YOUR NUMBER" class="social-link" target="blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke- width="2" stroke-linecap="round"
+                                stroke-linejoin="round" data-lucide="message-circle"
+                                class="lucide lucide-message-circle">
+                                <path
+                                    d="M2.992 16.342a2 2 0 0 1.094 1.1671-1.065 3.29a1 1 0 0 0 1.236 1.16813.413.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719">
+                                </path>
+                            </svg>
+                        </a>
+                        <a href="mailto:vatedigital@gmail.com" class="social-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke- X width="2" stroke-linecap="round"
+                                stroke-linejoin="round" data-lucide="mail" class="lucide lucide-mail">
+                                <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path>
+                                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                            </svg>
+                        </a>
+                        <a href="https://www.facebook.com/people/Vate-Digi/pfbid02zfG5x1FdR7JwK19N9oecWWMt5EPLHBtooDajPijhEiTxSNKVByZVtjaXy8XT6Pi61/"
+                            class="social-link" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke- width="2" stroke-linecap="round"
+                                stroke-linejoin="round" data-lucide="facebook" class="lucide lucide-facebook">
+                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h311-4h-4V7a1 100 1 1-1h3z"></path>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke- width="2" stroke-linecap="round"
+                                stroke-linejoin="round" data-lucide="instagram" class="lucide lucide-instagram">
+                                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin-"round" data-lucide="twitter" class="lucide lucide-twitter">
+                                <path
+                                    d="M22 45-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-203 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3. 8 1.1 0 3-1.2 3-1.22">
+                                </path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h5>Links</h5>
+                    <ul>
+                        <li>
+                            <a href="#">About Us</a>
+                        </li>
+                        <li>
+                            <a href="#">Success Stories</a>
+                        </li>
+                        <li>
+                            <a href="#">Privacy Policy</a>
+                        </li>
+                        <li>
+                            <a href="#">Careers</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h5>Connect</h5>
+                    <ul>
+                        <li>
+                            <a href="mailto:vatedigital@gmail.com"
+                                style="display: flex; align-items: center; gap: 8px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke- width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" data-lucide="mail" size="14" class="lucide lucide-mail">
+                                    <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path>
+                                    <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                                </svg>
+                                Email Us
+                            </a>
+                        </li>
+                        <a href="https://wa.me/YOUR NUMBER" style="display: flex; align-items: center; gap: 8px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" data-lucide="message-circle" size="14"
+                                class="lucide lucide-message-circle">
+                                <path
+                                    d="M2.992 16.342a2 2 0 jpeg.094 1.1671-1.065 3.29a1 1000 1.236 1.16813.413-.998a2 2 0 0 1 1.099.092 10 10 0 10-4.777-4719">
+                                </path>
+                            </svg>
+                            WhatsApp
+                        </a>
+                        </li>
+                        <li>
+                            <a href="tel:+918147285223" style="display: flex; align-items: center; gap: 8px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" data-lucide="phone" size="14" class="lucide lucide-phone">
+                                    <path
+                                        d="M13.832 16.568a1 1000 1.213-.3031.355-.46542 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 001 2-2h3a2 2 0 0 1 2 2v3a2 200 1.8 1.61-.468.351a1 1000-.292 1.233 14 14 0 0 0 6.392 6.384">
+                                    </path>
+                                </svg>
+                                Call Us
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.linkedin.com/company/vate-tech/"
+                                style="display: flex; align-items: center; gap: 8px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" data-lucide="linkedin" size="14"
+                                    class="lucide lucide-linkedin">
+                                    <path d="M16 8a6 60016 6v7h-4v-7a2 2000-2-22 2000-2 2v7h-4v-7a6 60016-6z"></path>
+                                    <rect width="4" height="12" x="2" y="9"></rect>
+                                    <circle cx="4" су="4" г="2"></circle>
+                                </svg>
+                                LinkedIn
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" style="display: flex; align-items: center; gap: 8px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" data-lucide="map-pin" size="14"
+                                    class="lucide lucide-map-pin">
+                                    <path
+                                        d="M20 1000 4.993-5.539 10.193-7.399 11.799a1 1001-1.202 009.539 20.193 4 14.993 4 10a8 8001 16 0">
+                                    </path>
+                                    <circle cx="12" су="10" г="3"></circle>
+                                </svg>
+                                Location
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+        </footer>
+        <footer copyright>
+            <p>&copy; 2026 VSS. All rights reserved.<a href="#" style="color:var(--primary)">Privacy
+                    Policy</a></p>
+        </footer copyright>
+
+    </div>
+
+    <div id="contactModal" class="modal-overlay">
+        <div class="glass-card modal-content">
+            <button
+                style="position:absolute; top:20px; right:20px; background:none; border:none; color:white; cursor:pointer; font-size:1.5rem;"
+                onclick="toggleModal()">&times;</button>
+            <h2 class="gradient-text" style="margin-bottom: 0.5rem;">Get Started</h2>
+            <p class="text-muted" style="margin-bottom: 1.5rem; font-size: 0.9rem;">Submit your details and we'll reach
+                out within 24 hours.</p>
+
+            <form action="https://formspree.io/f/vatedigital@gmail.com" method="POST">
+                <div class="form-group"><input type="text" name="name" placeholder="Full Name" required></div>
+                <div class="form-group"><input type="email" name="email" placeholder="Work Email" required></div>
+                <div class="form-group">
+                    <select name="interest" required>
+                        <option value="" disabled selected>I am interested in...</option>
+                        <option value="campus">Campus Hiring Programs</option>
+                        <option value="ai">AI Solutions & Consulting</option>
+                        <option value="training">Corporate/Student Training</option>
+                    </select>
+                </div>
+                <div class="form-group"><textarea name="message" placeholder="Briefly describe your requirements..."
+                        rows="3"></textarea></div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Submit Request</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        
+        const segments = {
+            students: {
+                title: "Programs + Outcomes + Projects",
+                desc: "Industry-aligned learning with real-world project exposure."
+            },
+            hiring: {
+                title: "Roles + Process + SLA",
+                desc: "Pre-vetted talent with fast turnaround hiring."
+            },
+            ai: {
+                title: "AI Use Cases + Deployment",
+                desc: "Custom AI solutions for enterprise growth."
+            }
+        };
+
+        function switchSegment(key, btn) {
+            document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.getElementById('dynamic-title').innerText = segments[key].title;
+            document.getElementById('dynamic-desc').innerText = segments[key].desc;
+        }
+
+        /* ===== MOUSE SPOTLIGHT ===== */
+        document.addEventListener('mousemove', e => {
+            document.querySelectorAll('.glass-card').forEach(card => {
+                const rect = card.getBoundingClientRect();
+                card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+                card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+            });
+        });
+
+        /* ===== SCROLL REVEAL ===== */
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        /* ===== NEURAL NETWORK BACKGROUND ===== */
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(34,211,238,0.3)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 1.2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const count = window.innerWidth < 768 ? 40 : 90;
+            for (let i = 0; i < count; i++) particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, i) => {
+                p.update();
+                p.draw();
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = p.x - particles[j].x;
+                    const dy = p.y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        ctx.strokeStyle = `rgba(34,211,238,${0.12 * (1 - dist / 150)})`;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            initParticles();
+        });
+
+        resizeCanvas();
+        initParticles();
+        animate();
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
