@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VSS | Recruitment & Staffing Solutions</title>
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
-      rel="stylesheet"
-    />
-
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet" />
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
@@ -18,7 +14,7 @@
          ================================ */
       :root {
         --primary: #22d3ee;
-        --primary-glow: rgba(34, 211, 238, 0.3);
+        --primary-glow: rgba(238, 34, 34, 0.712);
         --bg-dark: #020617;
         --card-bg: rgba(255, 255, 255, 0.03);
         --border-color: rgba(255, 255, 255, 0.1);
@@ -45,14 +41,8 @@
         line-height: 1.6;
       }
 
-      a {
-        text-decoration: none;
-        color: inherit;
-        transition: 0.3s;
-      }
-
       section {
-        padding: 60px 6%;
+        padding: clamp(40px, 8vw, 80px) 6%;
         position: relative;
         z-index: 2;
       }
@@ -63,11 +53,7 @@
       }
 
       .gradient-text {
-        background: linear-gradient(
-          135deg,
-          var(--accent-red) 0%,
-          var(--primary) 100%
-        );
+        background: linear-gradient(135deg, var(--accent-red) 0%, var(--primary) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
       }
@@ -78,11 +64,9 @@
         background: var(--primary);
         border-radius: 10px;
         margin: 14px 0 25px;
+        transition: width 0.4s ease;
       }
 
-      /* ===============================
-            CANVAS BACKGROUND
-         ================================ */
       #bg-canvas {
         position: fixed;
         inset: 0;
@@ -91,13 +75,13 @@
       }
 
       /* ===============================
-            HEADER
+            NAVIGATION
          ================================ */
       header {
         position: sticky;
         top: 0;
         z-index: 100;
-        background: rgba(2, 6, 23, 0.8);
+        background: rgba(2, 6, 23, 0.9);
         backdrop-filter: blur(12px);
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       }
@@ -112,9 +96,10 @@
       }
 
       .logo img {
-        height: 3.5rem;
-        width: 62px;
+        height: 3rem;
+        width: auto;
         display: block;
+        border-radius: 50px;
       }
 
       .nav-links {
@@ -123,46 +108,39 @@
         gap: 30px;
       }
 
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+      }
+
+      /* ===============================
+            BUTTONS
+         ================================ */
       .cta-btn {
         padding: 12px 24px;
         border-radius: 50px;
         background: var(--primary);
-        color: #000;
+        color: #000 !important;
         font-weight: 700;
         cursor: pointer;
         border: none;
         display: inline-block;
         transition: 0.3s;
+        text-align: center;
       }
 
       .cta-btn-outline {
         background: transparent;
-        color: var(--primary);
+        color: var(--primary) !important;
         border: 1px solid var(--primary);
       }
 
       .cta-btn:hover {
-        transform: scale(1.05);
+        transform: translateY(-2px);
         box-shadow: 0 0 20px var(--primary-glow);
-      }
-
-      /* ===============================
-            GLASS CARD
-         ================================ */
-      .glass-card {
-        position: relative;
-        background: var(--card-bg);
-        backdrop-filter: blur(12px);
-        border: 1px solid var(--border-color);
-        border-radius: 18px;
-        padding: 35px;
-        transition: all 0.35s ease;
-        height: 100%;
-      }
-
-      .glass-card:hover {
-        transform: translateY(-5px);
-        border-color: var(--accent-red);
       }
 
       /* ===============================
@@ -170,42 +148,87 @@
          ================================ */
       .hero {
         text-align: center;
-        padding: 100px 6% 60px;
+        padding-top: clamp(60px, 12vh, 120px);
       }
 
       .hero h1 {
-        font-size: clamp(2.2rem, 5vw, 3.5rem);
+        font-size: clamp(2rem, 6vw, 3.8rem);
         font-weight: 800;
-        margin-bottom: 20px;
-        line-height: 1.2;
-      }
-
-      .hero .actions {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        flex-wrap: wrap;
-        margin-top: 30px;
+        margin-bottom: 25px;
+        line-height: 1.1;
       }
 
       /* ===============================
-            SERVICE LINES (TICKER STYLE)
+            SERVICE BAR
          ================================ */
       .services-bar {
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--card-bg);
         padding: 20px;
-        border-radius: 12px;
+        border-radius: 16px;
         display: flex;
-        justify-content: space-around;
+        justify-content: center;
         flex-wrap: wrap;
-        gap: 20px;
+        gap: 20px 80px;
         text-align: center;
-        border: 1px solid var(--border-color);
+        border: 2px solid var(--border-color);
+        transition: border-color 0.3s ease;
       }
 
       .service-item {
         font-weight: 600;
         color: var(--primary);
+        font-size: 0.95rem;
+        white-space: nowrap;
+        transition: all 0.3s ease;
+        opacity: 0.8;
+      }
+
+      .service-item:hover {
+        opacity: 1;
+        transform: scale(1.1);
+        text-shadow: 0 0 8px var(--primary-glow);
+      }
+
+      /* ===============================
+            GLASS CARDS & HOVER EFFECTS
+         ================================ */
+      .glass-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(12px);
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        padding: clamp(20px, 5vw, 40px);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .glass-card:hover {
+        transform: translateY(-10px);
+        background: rgba(255, 255, 255, 0.06);
+        border-color: var(--primary-glow);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 
+                    0 0 20px rgba(34, 211, 238, 0.1);
+      }
+
+      .glass-card:hover .underline {
+        width: 100px;
+        background: var(--accent-red);
+      }
+
+      /* Animated list on hover */
+      .glass-card ul li {
+        transition: transform 0.3s ease;
+      }
+
+      .glass-card:hover ul li {
+        transform: translateX(5px);
+      }
+
+      .glass-card:hover li i {
+        transform: scale(1.2);
+        color: var(--accent-red) !important;
       }
 
       /* ===============================
@@ -216,51 +239,34 @@
         justify-content: space-between;
         align-items: center;
         gap: 10px;
-        margin-top: 20px;
-        overflow-x: auto;
-        padding-bottom: 10px;
+        margin-top: 30px;
       }
 
       .process-step {
         background: rgba(255, 255, 255, 0.05);
-        padding: 15px;
-        border-radius: 8px;
+        padding: 20px 15px;
+        border-radius: 12px;
         flex: 1;
-        min-width: 120px;
         text-align: center;
         font-size: 0.85rem;
+        font-weight: 600;
         border: 1px solid var(--border-color);
-        position: relative;
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
       }
 
-      .process-arrow {
-        color: var(--primary);
+      .process-step:hover {
+        background: var(--primary);
+        color: #000;
+        border-color: var(--primary);
+        transform: scale(1.05);
       }
 
       /* ===============================
             FORM STYLES
-         ================================ */
-      .lead-form input,
-      .lead-form select,
-      .lead-form textarea {
-        width: 100%;
-        padding: 12px;
-        margin-bottom: 15px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        color: white;
-      }
-
-      .lead-form label {
-        display: block;
-        margin-bottom: 5px;
-        font-size: 0.9rem;
-        color: var(--text-muted);
-      }
-
-      /* ===============================
-            GRID LAYOUTS
          ================================ */
       .grid-2col {
         display: grid;
@@ -268,32 +274,61 @@
         gap: 30px;
       }
 
-      /* ===============================
-            REVEAL ANIMATION
-         ================================ */
-      .reveal {
-        opacity: 0;
-        transform: translateY(30px);
-        transition: all 0.8s ease-out;
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
       }
 
-      .reveal.active {
-        opacity: 1;
-        transform: translateY(0);
+      .lead-form input {
+        width: 100%;
+        padding: 14px;
+        margin-bottom: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        color: white;
+        outline: none;
+        transition: all 0.3s ease;
+      }
+
+      .lead-form input:focus {
+        border-color: var(--primary);
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 10px var(--primary-glow);
+      }
+
+      /* ===============================
+            BREAKPOINTS
+         ================================ */
+      @media (max-width: 992px) {
+        .process-container {
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          gap: 20px;
+        }
+        .process-arrow { display: none; }
       }
 
       @media (max-width: 768px) {
-        .grid-2col {
-          grid-template-columns: 1fr;
-        }
-        .process-container {
+        .menu-toggle { display: block; }
+        .nav-links {
+          display: none;
+          position: absolute;
+          top: 100%; left: 0; width: 100%;
+          background: var(--bg-dark);
           flex-direction: column;
+          padding: 30px;
+          border-bottom: 1px solid var(--border-color);
         }
-        .process-arrow {
-          transform: rotate(90deg);
-          margin: 5px 0;
-        }
+        .nav-links.active { display: flex; }
+        .grid-2col, .form-row { grid-template-columns: 1fr; }
+        .process-container { grid-template-columns: 1fr 1fr; }
       }
+
+      /* Animation Classes */
+      .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+      .reveal.active { opacity: 1; transform: translateY(0); }
     </style>
   </head>
 
@@ -303,11 +338,12 @@
     <header>
       <nav class="nav">
         <div class="logo">
-          <img src="logo.png" alt="VSS Logo" />
+          <img src="logo.png" alt="VSS" />
         </div>
-        <div class="nav-links">
-          <!-- <a href="landingpage.html">Services</a>
-          <a href="about.html">About</a> -->
+        <button class="menu-toggle" id="menuToggle">
+          <i data-lucide="menu"></i>
+        </button>
+        <div class="nav-links" id="navLinks">
           <a href="#" class="cta-btn">Contact Us</a>
         </div>
       </nav>
@@ -316,12 +352,10 @@
     <main class="container">
       <section class="hero reveal">
         <h1>
-          <span class="gradient-text">Hire Trained, Screened Talent
-            <br> Not Just Resumes</span
-          >
+          <span class="gradient-text">Hire Trained, Screened Talent <br /> Not Just Resumes</span>
         </h1>
         <div class="actions">
-          <a href="#lead-form" class="cta-btn">Submit Hiring Requirement</a>
+          <a href="#lead-form" class="cta-btn">Submit Requirement</a>
           <a href="#" class="cta-btn cta-btn-outline">Talk to Recruiter</a>
         </div>
       </section>
@@ -329,25 +363,16 @@
       <section class="reveal">
         <div class="services-bar">
           <span class="service-item">IT Staffing</span>
-          <span class="process-arrow">•</span>
           <span class="service-item">Non-IT Staffing</span>
-          <span class="process-arrow">•</span>
           <span class="service-item">Campus Hiring</span>
-          <span class="process-arrow">•</span>
           <span class="service-item">Hire-Train-Deploy</span>
-          <span class="process-arrow">•</span>
           <span class="service-item">Staff Augmentation</span>
         </div>
       </section>
 
       <section class="reveal">
         <div class="glass-card">
-           <h2>
-          <span style="color: var(--primary)">O</span
-          ><span style="color: white">ur</span>
-          <span style="color: var(--accent-red)">P</span
-          ><span style="color: white">rocess</span>
-        </h2>
+          <h2><span style="color: var(--primary)">O</span>ur <span style="color: var(--accent-red)">P</span>rocess</h2>
           <div class="underline"></div>
           <div class="process-container">
             <div class="process-step">Intake</div>
@@ -358,9 +383,9 @@
             <i data-lucide="chevron-right" class="process-arrow"></i>
             <div class="process-step">Shortlist</div>
             <i data-lucide="chevron-right" class="process-arrow"></i>
-            <div class="process-step">Interview Coordination</div>
+            <div class="process-step">Interviews</div>
             <i data-lucide="chevron-right" class="process-arrow"></i>
-            <div class="process-step">Onboarding Support</div>
+            <div class="process-step">Onboarding</div>
           </div>
         </div>
       </section>
@@ -368,76 +393,21 @@
       <section class="reveal">
         <div class="grid-2col">
           <div class="glass-card">
-            <h2>
-          <span style="color: var(--primary)">D</span
-          ><span style="color: white">ifferentiators</span>
-          <span style="color: var(--primary)">/ S</span
-          ><span style="color: white">uccess Metrics</span>
-        </h2>
+            <h2><span style="color: var(--primary)">D</span>ifferentiators</h2>
             <div class="underline"></div>
             <ul style="list-style: none; color: var(--text-muted)">
-              <li style="margin-bottom: 15px">
-                <i
-                  data-lucide="check-circle"
-                  style="
-                    display: inline;
-                    width: 18px;
-                    color: var(--primary);
-                    margin-right: 10px;
-                  "
-                ></i>
-                <strong>Time-to-submit:</strong> Industry leading turnaround.
-              </li>
-              <li style="margin-bottom: 15px">
-                <i
-                  data-lucide="check-circle"
-                  style="
-                    display: inline;
-                    width: 18px;
-                    color: var(--primary);
-                    margin-right: 10px;
-                  "
-                ></i>
-                <strong>Offer-Join Ratio:</strong> High conversion efficiency.
-              </li>
-              <li style="margin-bottom: 15px">
-                <i
-                  data-lucide="check-circle"
-                  style="
-                    display: inline;
-                    width: 18px;
-                    color: var(--primary);
-                    margin-right: 10px;
-                  "
-                ></i>
-                <strong>Retention:</strong> Quality-focused placement.
-              </li>
-              <li>
-                <i
-                  data-lucide="shield"
-                  style="
-                    display: inline;
-                    width: 18px;
-                    color: var(--primary);
-                    margin-right: 10px;
-                  "
-                ></i>
-                <strong>Replacement Policy:</strong> Risk-free hiring guarantee.
-              </li>
+              <li style="margin-bottom: 12px"><i data-lucide="check-circle" style="width: 18px; color: var(--primary); margin-right: 10px; vertical-align: middle; transition: all 0.3s"></i> <strong>Time-to-submit:</strong> Industry leading speed.</li>
+              <li style="margin-bottom: 12px"><i data-lucide="check-circle" style="width: 18px; color: var(--primary); margin-right: 10px; vertical-align: middle; transition: all 0.3s"></i> <strong>Offer-Join Ratio:</strong> High conversion.</li>
+              <li style="margin-bottom: 12px"><i data-lucide="check-circle" style="width: 18px; color: var(--primary); margin-right: 10px; vertical-align: middle; transition: all 0.3s"></i> <strong>Retention:</strong> Quality placements.</li>
+              <li><i data-lucide="shield" style="width: 18px; color: var(--primary); margin-right: 10px; vertical-align: middle; transition: all 0.3s"></i> <strong>Replacement Policy:</strong> Risk-free guarantee.</li>
             </ul>
           </div>
 
           <div class="glass-card">
-            <h2>
-          <span style="color: var(--primary)">R</span
-          ><span style="color: white">oles We</span>
-          <span style="color: var(--accent-red)">H</span
-          ><span style="color: white">ire For</span>
-        </h2>
+            <h2><span style="color: var(--primary)">R</span>oles We <span style="color: var(--accent-red)">H</span>ire For</h2>
             <div class="underline"></div>
             <p style="color: var(--text-muted)">
-              Software Developers, Data Scientists, HR Professionals, Operations
-              Leads, Sales Executives, and Specialized Technical Roles.
+              Software Developers, Data Scientists, HR Professionals, Operations Leads, Sales Executives, and Specialized Technical Roles across all domains.
             </p>
           </div>
         </div>
@@ -445,32 +415,23 @@
 
       <section id="lead-form" class="reveal">
         <div class="glass-card">
-             <h2>
-          <span style="color: var(--primary)">S</span
-          ><span style="color: white">ubmit</span>
-          <span style="color: var(--accent-red)">R</span
-          ><span style="color: white">equirement</span>
-          </h2>
+          <h2><span style="color: var(--primary)">S</span>ubmit <span style="color: var(--accent-red)">R</span>equirement</h2>
           <div class="underline"></div>
           <form class="lead-form">
-            <div
-              style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px"
-            >
+            <div class="form-row">
               <div>
                 <label>Company Name</label>
-                <input type="text" placeholder="Enter Company Name" />
+                <input type="text" placeholder="Your Company" required />
               </div>
               <div>
                 <label>Role to Hire</label>
-                <input type="text" placeholder="e.g. Senior Java Developer" />
+                <input type="text" placeholder="e.g. Java Developer" required />
               </div>
             </div>
-            <div
-              style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px"
-            >
+            <div class="form-row">
               <div>
                 <label>Headcount</label>
-                <input type="number" placeholder="Number of positions" />
+                <input type="number" placeholder="Quantity" />
               </div>
               <div>
                 <label>Location</label>
@@ -478,13 +439,9 @@
               </div>
             </div>
             <label>Upload JD (PDF/Doc)</label>
-            <input type="file" style="padding: 8px" />
-            <button
-              type="submit"
-              class="cta-btn"
-              style="width: 100%; border-radius: 8px; margin-top: 10px"
-            >
-              Submit Requirements
+            <input type="file" style="color: #fff; margin-bottom: 20px; display: block;" />
+            <button type="submit" class="cta-btn" style="width: 100%; border-radius: 12px">
+              Send Requirements
             </button>
           </form>
         </div>
@@ -492,48 +449,28 @@
     </main>
 
     <footer>
-      <div
-        class="container"
-        style="
-          text-align: center;
-          padding: 40px 0;
-          color: var(--text-muted);
-          border-top: 1px solid var(--border-color);
-        "
-      >
+      <div class="container" style="text-align: center; padding: 40px 0; color: var(--text-muted); border-top: 1px solid var(--border-color)">
         <p>© 2026 VSS Recruitment Solutions</p>
       </div>
     </footer>
 
     <script>
-      /* ===============================
-         SCROLL REVEAL
-      ================================ */
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) entry.target.classList.add("active");
-          });
-        },
-        { threshold: 0.1 }
-      );
-
-      document
-        .querySelectorAll(".reveal")
-        .forEach((el) => observer.observe(el));
-
-      /* ===============================
-         ICONS
-      ================================ */
       lucide.createIcons();
 
-      /* ===============================
-         NETWORK NODES CANVAS (BG)
-      ================================ */
+      const menuToggle = document.getElementById('menuToggle');
+      const navLinks = document.getElementById('navLinks');
+      menuToggle.addEventListener('click', () => navLinks.classList.toggle('active'));
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) entry.target.classList.add("active");
+        });
+      }, { threshold: 0.1 });
+      document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+
       const canvas = document.getElementById("bg-canvas");
       const ctx = canvas.getContext("2d");
-
-      let w, h;
+      let w, h, particles = [];
       function resize() {
         w = canvas.width = window.innerWidth;
         h = canvas.height = window.innerHeight;
@@ -541,51 +478,36 @@
       window.addEventListener("resize", resize);
       resize();
 
-      const particles = [];
-      const count = window.innerWidth < 768 ? 40 : 90;
-
       class Particle {
-        constructor() {
+        constructor() { this.init(); }
+        init() {
           this.x = Math.random() * w;
           this.y = Math.random() * h;
-          this.vx = (Math.random() - 0.5) * 0.5;
-          this.vy = (Math.random() - 0.5) * 0.5;
+          this.vx = (Math.random() - 0.5) * 0.4;
+          this.vy = (Math.random() - 0.5) * 0.4;
         }
         move() {
-          this.x += this.vx;
-          this.y += this.vy;
+          this.x += this.vx; this.y += this.vy;
           if (this.x < 0 || this.x > w) this.vx *= -1;
           if (this.y < 0 || this.y > h) this.vy *= -1;
         }
       }
-
-      for (let i = 0; i < count; i++) particles.push(new Particle());
+      for (let i = 0; i < (window.innerWidth < 768 ? 30 : 70); i++) particles.push(new Particle());
 
       function animate() {
         ctx.clearRect(0, 0, w, h);
-        particles.forEach((p) => {
+        particles.forEach((p, i) => {
           p.move();
-          ctx.fillStyle = "rgba(34, 211, 238, 0.3)";
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
-          ctx.fill();
-        });
-
-        for (let i = 0; i < count; i++) {
-          for (let j = i + 1; j < count; j++) {
-            const dx = particles[i].x - particles[j].x;
-            const dy = particles[i].y - particles[j].y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
+          ctx.fillStyle = "rgba(34, 211, 238, 0.2)";
+          ctx.beginPath(); ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2); ctx.fill();
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = p.x - particles[j].x, dy = p.y - particles[j].y, dist = Math.sqrt(dx * dx + dy * dy);
             if (dist < 150) {
-              ctx.strokeStyle = `rgba(34, 211, 238, ${0.15 - dist / 1000})`;
-              ctx.lineWidth = 0.5;
-              ctx.beginPath();
-              ctx.moveTo(particles[i].x, particles[i].y);
-              ctx.lineTo(particles[j].x, particles[j].y);
-              ctx.stroke();
+              ctx.strokeStyle = `rgba(34, 211, 238, ${0.12 - dist/1200})`;
+              ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
             }
           }
-        }
+        });
         requestAnimationFrame(animate);
       }
       animate();
