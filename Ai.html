@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Course Details | Generative AI & LLMs</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+      :root {
+        --primary: #22d3ee;
+        --primary-glow: rgba(34, 211, 238, 0.3);
+        --bg-dark: #020617;
+        --card-bg: rgba(255, 255, 255, 0.03);
+        --border-color: rgba(238, 34, 34, 0.555);
+        --accent-red: #ff4747;
+        --text-main: #ffffff;
+        --text-muted: #c5deff;
+        --font-main: "Plus Jakarta Sans", sans-serif;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-main);
+        background: var(--bg-dark);
+        color: var(--text-main);
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
+
+      #bg-canvas {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(2, 6, 23, 0.8);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 6%;
+        max-width: 1400px;
+        margin: auto;
+      }
+
+      .logo img {
+        height: 3.5rem;
+        width: 62px;
+        border-radius: 50px;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+      }
+      .nav-links a {
+        color: var(--text-muted);
+        font-weight: 600;
+      }
+      .nav-links a:hover {
+        color: var(--primary);
+      }
+
+      .cta-btn {
+        padding: 12px 28px;
+        border-radius: 50px;
+        background: var(--primary);
+        color: #000;
+        font-weight: 800;
+        cursor: pointer;
+        border: none;
+        transition: 0.3s;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .cta-btn-outline {
+        background: transparent;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+      }
+
+      .cta-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 25px var(--primary-glow);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: auto;
+        position: relative;
+        z-index: 2;
+      }
+
+      section {
+        padding: 60px 6%;
+      }
+
+      .gradient-text {
+        background: linear-gradient(
+          135deg,
+          var(--accent-red) 0%,
+          var(--primary) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .course-hero {
+        text-align: center;
+        padding: 100px 6% 40px;
+      }
+      .course-hero h1 {
+        font-size: clamp(2.5rem, 6vw, 4.5rem);
+        font-weight: 800;
+        margin-bottom: 20px;
+        letter-spacing: -1px;
+      }
+      .course-meta {
+        color: var(--text-muted);
+        font-size: 1.4rem;
+        margin-bottom: 35px;
+        max-width: 850px;
+        margin-inline: auto;
+      }
+
+      .glass-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-color);
+        border-radius: 28px;
+        padding: 40px;
+        height: 100%;
+        transition: 0.4s ease;
+      }
+      .glass-card:hover {
+        border-color: var(--primary);
+        box-shadow: 0 10px 40px -10px rgba(34, 211, 238, 0.15);
+      }
+
+      .underline {
+        width: 40px;
+        height: 4px;
+        background: var(--primary);
+        border-radius: 10px;
+        margin: 15px 0 25px;
+      }
+
+      .tech-badge-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 15px;
+      }
+      .tech-badge {
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.3s;
+      }
+
+      .grid-layout {
+        display: grid;
+        grid-template-columns: 1.8fr 1.2fr;
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+      .grid-equal {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+
+      .accordion-item {
+        border-bottom: 1px solid var(--border-color);
+      }
+      .accordion-header {
+        padding: 26px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 700;
+        font-size: 1.2rem;
+      }
+      .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        background: rgba(0, 0, 0, 0.4);
+      }
+      .accordion-content.active {
+        max-height: 1000px;
+        padding-bottom: 35px;
+      }
+
+      .syllabus-list {
+        list-style: none;
+        padding: 0 26px;
+      }
+      .syllabus-list li {
+        margin-bottom: 14px;
+        padding-left: 28px;
+        position: relative;
+        font-size: 0.95rem;
+        color: var(--text-muted);
+      }
+      .syllabus-list li::before {
+        content: "✔";
+        position: absolute;
+        left: 0;
+        color: var(--primary);
+        font-weight: 900;
+      }
+      .lab-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 16px;
+        border-radius: 8px;
+        background: rgba(34, 211, 238, 0.08);
+        border: 1px solid var(--primary);
+        font-size: 0.75rem;
+        color: var(--primary);
+        margin: 20px 26px;
+        text-transform: uppercase;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+      .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 992px) {
+        .grid-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 768px) {
+        .grid-equal {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <canvas id="bg-canvas"></canvas>
+
+    <header>
+      <nav class="nav">
+        <div class="logo"><img src="logo.png" alt="VSS" /></div>
+        <div class="nav-links">
+          <a href="#">Courses</a>
+          <a href="#">Enterprise</a>
+          <a href="#" class="cta-btn">Login</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section class="course-hero reveal">
+        <h1 class="gradient-text">Generative AI Engineering</h1>
+        <p class="course-meta">
+          Master the elite stack: From Transformer math to LLM-Ops and
+          Multi-Agent Autonomy.
+        </p>
+        <div class="actions">
+          <a href="#" class="cta-btn">Apply for Cohort </a>
+          <a href="#" class="cta-btn cta-btn-outline">View Sample Project</a>
+        </div>
+      </section>
+
+      <section class="reveal">
+        <div class="grid-layout">
+          <div class="glass-card">
+            <h2>Curriculum Outcomes</h2>
+            <div class="underline"></div>
+            <p
+              style="
+                color: var(--text-muted);
+                margin-bottom: 25px;
+                font-size: 1.1rem;
+              "
+            >
+              Bridge the gap between "Prompting" and "Engineering". You will
+              graduate with the ability to:
+            </p>
+            <ul
+              style="
+                list-style: none;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 18px;
+              "
+            >
+              <li style="color: var(--text-muted); font-size: 0.95rem">
+                <i
+                  data-lucide="zap"
+                  style="color: var(--primary); width: 18px; margin-right: 8px"
+                ></i>
+                Implement Custom Attention Heads
+              </li>
+              <li style="color: var(--text-muted); font-size: 0.95rem">
+                <i
+                  data-lucide="database"
+                  style="color: var(--primary); width: 18px; margin-right: 8px"
+                ></i>
+                Optimize Vector Search @ Scale
+              </li>
+              <li style="color: var(--text-muted); font-size: 0.95rem">
+                <i
+                  data-lucide="cpu"
+                  style="color: var(--primary); width: 18px; margin-right: 8px"
+                ></i>
+                Perform Full Fine-Tuning Labs
+              </li>
+              <li style="color: var(--text-muted); font-size: 0.95rem">
+                <i
+                  data-lucide="git-branch"
+                  style="color: var(--primary); width: 18px; margin-right: 8px"
+                ></i>
+                Build LangGraph Workflows
+              </li>
+              <li style="color: var(--text-muted); font-size: 0.95rem">
+                <i
+                  data-lucide="shield-check"
+                  style="color: var(--primary); width: 18px; margin-right: 8px"
+                ></i>
+                Deploy with LLM Guardrails
+              </li>
+              <li style="color: var(--text-muted); font-size: 0.95rem">
+                <i
+                  data-lucide="bar-chart-3"
+                  style="color: var(--primary); width: 18px; margin-right: 8px"
+                ></i>
+                Master LLM-Ops & Monitoring
+              </li>
+            </ul>
+          </div>
+
+          <div class="glass-card">
+            <h2>The Tech Stack</h2>
+            <div class="underline"></div>
+            <div class="tech-badge-container">
+              <span class="tech-badge">🐍 Python 3.11</span>
+              <span class="tech-badge">🔥 PyTorch 2.x</span>
+              <span class="tech-badge">🤗 Transformers</span>
+              <span class="tech-badge">🦜 LangChain</span>
+              <span class="tech-badge">🕸️ LangGraph</span>
+              <span class="tech-badge">🌲 Pinecone</span>
+              <span class="tech-badge">🔵 ChromaDB</span>
+              <span class="tech-badge">🧪 WandB</span>
+              <span class="tech-badge">⚡ FastAPI</span>
+              <span class="tech-badge">🐳 Docker</span>
+            </div>
+            <div
+              style="
+                margin-top: 25px;
+                padding: 18px;
+                background: rgba(34, 211, 238, 0.05);
+                border-radius: 16px;
+                border: 1px solid var(--border-color);
+              "
+            >
+              <p
+                style="
+                  font-size: 0.85rem;
+                  color: var(--primary);
+                  font-weight: 700;
+                "
+              >
+                <i
+                  data-lucide="info"
+                  style="width: 16px; vertical-align: bottom"
+                ></i>
+                Labs include H100 GPU compute credits.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="reveal">
+        <div class="glass-card" style="padding: 0; overflow: hidden">
+          <div style="padding: 40px 40px 10px">
+            <h2 style="font-size: 2.2rem">Syllabus Deep-Dive</h2>
+            <div class="underline"></div>
+          </div>
+
+          <div class="accordion">
+            <div class="accordion-item">
+              <div class="accordion-header">
+                Phase 1: Transformers & LLM Architecture
+                <i data-lucide="chevron-down"></i>
+              </div>
+              <div class="accordion-content">
+                <ul class="syllabus-list">
+                  <li>
+                    Tokenization Deep-Dive: Byte-Pair Encoding (BPE) & WordPiece
+                  </li>
+                  <li>
+                    The Math of Attention: KV Cache, RoPE, and Flash Attention
+                  </li>
+                  <li>
+                    Architectural differences: Encoder-only, Decoder-only, and
+                    Hybrid
+                  </li>
+                </ul>
+                <div class="lab-badge">
+                  Project: Build a GPT-2 style model from scratch
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <div class="accordion-header">
+                Phase 2: RAG & Knowledge Retrieval
+                <i data-lucide="chevron-down"></i>
+              </div>
+              <div class="accordion-content">
+                <ul class="syllabus-list">
+                  <li>
+                    Semantic Search vs Keyword Search: BM25 & Hybrid Ranking
+                  </li>
+                  <li>Chunking Strategies: Semantic, Recursive, and Agentic</li>
+                  <li>VectorDB Benchmarking: FAISS vs Pinecone vs Weaviate</li>
+                </ul>
+                <div class="lab-badge">
+                  Lab: Enterprise-grade PDF ingestion engine
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <div class="accordion-header">
+                Phase 3: Fine-Tuning & Model Alignment
+                <i data-lucide="chevron-down"></i>
+              </div>
+              <div class="accordion-content">
+                <ul class="syllabus-list">
+                  <li>Instruction Tuning vs Task-Specific Fine-tuning</li>
+                  <li>Efficiency Labs: LoRA, QLoRA, and Adapter Fusion</li>
+                  <li>
+                    Alignment Theory: RLHF vs DPO (Direct Preference
+                    Optimization)
+                  </li>
+                </ul>
+                <div class="lab-badge">
+                  Lab: Fine-tune Mistral for Medical Extraction
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <div class="accordion-header">
+                Phase 4: Multi-Agent Systems & Deployment
+                <i data-lucide="chevron-down"></i>
+              </div>
+              <div class="accordion-content">
+                <ul class="syllabus-list">
+                  <li>
+                    Building Autonomous Agents with Tool-calling capabilities
+                  </li>
+                  <li>
+                    Advanced Workflows: LangGraph for stateful multi-agent loops
+                  </li>
+                  <li>
+                    LLM-Ops: CI/CD for LLMs, Evals (RAGAS), and Deployment
+                    (vLLM)
+                  </li>
+                </ul>
+                <div class="lab-badge">
+                  Capstone: Deploy a 24/7 Autonomous AI Support Swarm
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="reveal">
+        <h2 style="margin-bottom: 30px; text-align: center">Success Stories</h2>
+        <div class="grid-equal">
+          <div class="glass-card">
+            <div
+              style="
+                display: flex;
+                gap: 15px;
+                align-items: center;
+                margin-bottom: 20px;
+              "
+            >
+              <div
+                style="
+                  width: 50px;
+                  height: 50px;
+                  border-radius: 50%;
+                  background: linear-gradient(
+                    var(--primary),
+                    var(--accent-red)
+                  );
+                "
+              ></div>
+              <div>
+                <h4 style="font-weight: 800">Rahul M.</h4>
+                <p style="font-size: 0.8rem; color: var(--primary)">
+                  AI Engineer @ Tier-1 Tech
+                </p>
+              </div>
+            </div>
+            <p style="font-style: italic; color: var(--text-muted)">
+              "The Phase 3 labs on QLoRA were a game changer. I used the same
+              techniques to reduce our company's LLM costs by 60% while
+              improving latency."
+            </p>
+          </div>
+          <div class="glass-card">
+            <div
+              style="
+                display: flex;
+                gap: 15px;
+                align-items: center;
+                margin-bottom: 20px;
+              "
+            >
+              <div
+                style="
+                  width: 50px;
+                  height: 50px;
+                  border-radius: 50%;
+                  background: linear-gradient(
+                    var(--accent-red),
+                    var(--primary)
+                  );
+                "
+              ></div>
+              <div>
+                <h4 style="font-weight: 800">Sneha V.</h4>
+                <p style="font-size: 0.8rem; color: var(--primary)">
+                  ML Lead @ Healthcare SaaS
+                </p>
+              </div>
+            </div>
+            <p style="font-style: italic; color: var(--text-muted)">
+              "From struggling with hallucinations to building a rock-solid RAG
+              pipeline with 95% accuracy. Best technical investment I've made."
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="reveal">
+        <div class="glass-card">
+          <h2>Program FAQs</h2>
+          <div class="underline"></div>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+              gap: 20px;
+            "
+          >
+            <div>
+              <h4 style="color: var(--primary); margin-bottom: 8px">
+                What is the weekly time commitment?
+              </h4>
+              <p style="font-size: 0.9rem; color: var(--text-muted)">
+                Expect 8-10 hours per week (4 hours of lectures + 4-6 hours of
+                hands-on labs).
+              </p>
+            </div>
+            <div>
+              <h4 style="color: var(--primary); margin-bottom: 8px">
+                Will I get access to GPUs?
+              </h4>
+              <p style="font-size: 0.9rem; color: var(--text-muted)">
+                Yes, students get dedicated GPU compute hours on A100/H100
+                instances for fine-tuning units.
+              </p>
+            </div>
+            <div>
+              <h4 style="color: var(--primary); margin-bottom: 8px">
+                Do you provide a certificate?
+              </h4>
+              <p style="font-size: 0.9rem; color: var(--text-muted)">
+                You receive a blockchain-verified Professional AI Engineering
+                Badge upon completing the Capstone.
+              </p>
+            </div>
+            <div>
+              <h4 style="color: var(--primary); margin-bottom: 8px">
+                Is there a refund policy?
+              </h4>
+              <p style="font-size: 0.9rem; color: var(--text-muted)">
+                We offer a 7-day "No Questions Asked" refund if you aren't
+                satisfied with the course depth.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div
+        class="container"
+        style="
+          text-align: center;
+          padding: 60px 0;
+          color: var(--text-muted);
+          border-top: 1px solid var(--border-color);
+        "
+      >
+        <p>© 2026 VSS | Leading the AI Revolution</p>
+      </div>
+    </footer>
+
+    <script>
+      /* ACCORDION */
+      document.querySelectorAll(".accordion-header").forEach((header) => {
+        header.addEventListener("click", () => {
+          const content = header.nextElementSibling;
+          const icon = header.querySelector("i");
+          const isOpen = content.classList.contains("active");
+
+          document
+            .querySelectorAll(".accordion-content")
+            .forEach((c) => c.classList.remove("active"));
+          document
+            .querySelectorAll(".accordion-header i")
+            .forEach((i) => (i.style.transform = "rotate(0deg)"));
+
+          if (!isOpen) {
+            content.classList.add("active");
+            icon.style.transform = "rotate(180deg)";
+          }
+        });
+      });
+
+      /* REVEAL */
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) entry.target.classList.add("active");
+          });
+        },
+        { threshold: 0.1 }
+      );
+      document
+        .querySelectorAll(".reveal")
+        .forEach((el) => observer.observe(el));
+
+      lucide.createIcons();
+
+      /* CANVAS BACKGROUND */
+      const canvas = document.getElementById("bg-canvas");
+      const ctx = canvas.getContext("2d");
+      let w, h;
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+      window.addEventListener("resize", resize);
+      resize();
+
+      const particles = [];
+      const count = window.innerWidth < 768 ? 40 : 100;
+
+      class Particle {
+        constructor() {
+          this.x = Math.random() * w;
+          this.y = Math.random() * h;
+          this.vx = (Math.random() - 0.5) * 0.4;
+          this.vy = (Math.random() - 0.5) * 0.4;
+        }
+        move() {
+          this.x += this.vx;
+          this.y += this.vy;
+          if (this.x < 0 || this.x > w) this.vx *= -1;
+          if (this.y < 0 || this.y > h) this.vy *= -1;
+        }
+      }
+      for (let i = 0; i < count; i++) particles.push(new Particle());
+
+      function animate() {
+        ctx.clearRect(0, 0, w, h);
+        particles.forEach((p) => {
+          p.move();
+          ctx.fillStyle = "rgba(34, 211, 238, 0.25)";
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        for (let i = 0; i < count; i++) {
+          for (let j = i + 1; j < count; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 180) {
+              ctx.strokeStyle = `rgba(34, 211, 238, ${0.12 - dist / 1500})`;
+              ctx.lineWidth = 0.5;
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(animate);
+      }
+      animate();
+    </script>
+  </body>
+</html>
